@@ -30,7 +30,6 @@ const int WINDOW_WIDTH = 1000, WINDOW_HEIGHT = 800;
 GLfloat lastX = WINDOW_WIDTH / 2.0f, lastY = WINDOW_HEIGHT / 2.0f;
 
 int mode = 0;//0平移，1旋转
-glm::vec3 rotateVec = glm::vec3(0.0f, 1.0f, 0.0f);
 
 bool firstMouseMove = true;
 
@@ -104,91 +103,164 @@ int main(int argc, char** argv)
 	//视口变换将位于-1.0到1.0范围的坐标变换到由glViewport函数所定义的坐标范围内
 
 	//dragon
-	vector<Vertex> dragonvertData;
+	/*vector<Vertex> dragonvertData;
 	if (!objloader.loadFromFile("dragon.obj", dragonvertData))
 	{
 		std::cerr << "Could not load obj model, exit now.";
 		std::system("pause");
 		exit(-1);
-	}
+	}*/
 
-	//桌子
-	vector<Vertex> vertData;
-	if (!objloader.loadFromFile("file.obj", vertData))
-	{
-		std::cerr << "Could not load obj model, exit now.";
-		std::system("pause");
-		exit(-1);
-	}
+	////桌子
+	//vector<Vertex> vertData;
+	//if (!objloader.loadFromFile("file.obj", vertData))
+	//{
+	//	std::cerr << "Could not load obj model, exit now.";
+	//	std::system("pause");
+	//	exit(-1);
+	//}
 
-	//椅子
-	vector<Vertex> ChairvertData;
-	if (!objloader.loadFromFile("obj.obj", ChairvertData))
-	{
-		std::cerr << "Could not load obj model, exit now.";
-		std::system("pause");
-		exit(-1);
-	}
+
+	////椅子
+	//vector<Vertex> ChairvertData;
+	//if (!objloader.loadFromFile("obj.obj", ChairvertData))
+	//{
+	//	std::cerr << "Could not load obj model, exit now.";
+	//	std::system("pause");
+	//	exit(-1);
+	//}
+
 
 	//灯
-	vector<Vertex> vertData1;
-	vec3 v1, v2, v3, v4;
-	v1 = vec3(0.0f, 1.0f, 0.0f);
-	v2 = vec3(-1.0f, 0.0f, 0.0f);
-	v3 = vec3(1.0f, 0.0f, 0.0f);
-	v4 = vec3(0.0f, 0.0f, 1.0f);
-	vec3 normal1 = normalize(cross(v2 - v1, v3 - v1));
-	vec3 normal2 = normalize(cross(v4 - v1, v3 - v1));
-	vec3 normal3 = normalize(cross(v2 - v1, v4 - v1));
-	vec3 normal4 = normalize(cross(v3 - v2, v4 - v2));
-
-	Vertex ver1, ver2, ver3, ver4, ver5, ver6, ver7, ver8, ver9, ver10, ver11, ver12;
-	ver1.position = v1;
-	ver1.normal = normal1;
-	ver2.position = v2;
-	ver2.normal = normal1;
-	ver3.position = v3;
-	ver3.normal = normal1;
-	ver4.position = v1;
-	ver4.normal = normal2;
-	ver5.position = v4;
-	ver5.normal = normal2;
-	ver6.position = v3;
-	ver6.normal = normal2;
-	ver7.position = v1;
-	ver7.normal = normal3;
-	ver8.position = v2;
-	ver8.normal = normal3;
-	ver9.position = v4;
-	ver9.normal = normal3;
-	ver10.position = v2;
-	ver10.normal = normal1;
-	ver11.position = v3;
-	ver11.normal = normal1;
-	ver12.position = v4;
-	ver12.normal = normal1;
-
-	vertData1.push_back(ver1);
-	vertData1.push_back(ver2);
-	vertData1.push_back(ver3);
-	vertData1.push_back(ver4);
-	vertData1.push_back(ver5);
-	vertData1.push_back(ver6);
-	vertData1.push_back(ver7);
-	vertData1.push_back(ver8);
-	vertData1.push_back(ver9);
-	vertData1.push_back(ver10);
-	vertData1.push_back(ver11);
-	vertData1.push_back(ver12);
-
-
-	vector<Vertex> earthvertData;
-	if (!objloader.loadFromFile("earth_03.obj", earthvertData))
+	vector<Vertex> vertDataLight;
+	if (!objloader.loadFromFile("light.obj", vertDataLight))
 	{
 		std::cerr << "Could not load obj model, exit now.";
 		std::system("pause");
 		exit(-1);
 	}
+
+
+
+	//vector<Vertex> earthvertData;
+	//if (!objloader.loadFromFile("earth_03.obj", earthvertData))
+	//{
+	//	std::cerr << "Could not load obj model, exit now.";
+	//	std::system("pause");
+	//	exit(-1);
+	//}
+
+	////墙壁
+	//vector<Vertex> wallData;
+	//vec3 wallv1, wallv2, wallv3, wallv4, wallv5, wallv6, wallv7, wallv8;
+	//wallv1 = vec3(-1.0f, -1.0f, 1.0f);
+	//wallv2 = vec3(-1.0f, 1.0f, 1.0f);
+	//wallv3 = vec3(-1.0f, 1.0f, -1.0f);
+	//wallv4 = vec3(-1.0f, -1.0f, -1.0f);
+	//wallv5 = vec3(1.0f, 1.0f, -1.0f);
+	//wallv6 = vec3(1.0f, -1.0f, -1.0f);
+	//wallv7 = vec3(1.0f, -1.0f, 1.0f);
+	//wallv8 = vec3(1.0f, 1.0f, 1.0f);
+	//vec3 wallnormal1 = vec3(1.0f,0.0f,0.0f);
+	//vec3 wallnormal2 = vec3(0.0f,0.0f,1.0f);
+	//vec3 wallnormal3 = vec3(-1.0f,0.0f,0.0f);
+	//vec3 wallnormal4 = vec3(0.0f, -1.0f, 0.0f);//上
+	//vec3 wallnormal5 = vec3(0.0f, 1.0f, 0.0f);//下
+	//Vertex wallver1, wallver2, wallver3, wallver4, wallver5, wallver6, wallver7, wallver8, wallver9, wallver10, 
+	//	wallver19, wallver20, wallver11, wallver12,wallver13,wallver14,wallver15,wallver16,wallver17,wallver18,
+	//	wallver21, wallver22, wallver23, wallver24, wallver25, wallver26, wallver27, wallver28, wallver29, wallver30;
+	//wallver1.position = wallv1;
+	//wallver1.normal = wallnormal1;
+	//wallver2.position = wallv2;
+	//wallver2.normal = wallnormal1;
+	//wallver3.position = wallv3;
+	//wallver3.normal = wallnormal1;
+	//wallver4.position = wallv3;
+	//wallver4.normal = wallnormal1;
+	//wallver5.position = wallv1;
+	//wallver5.normal = wallnormal1;
+	//wallver6.position = wallv4;
+	//wallver6.normal = wallnormal1;
+	//wallver7.position = wallv3;
+	//wallver7.normal = wallnormal2;
+	//wallver8.position = wallv4;
+	//wallver8.normal = wallnormal2;
+	//wallver9.position = wallv6;
+	//wallver9.normal = wallnormal2;
+	//wallver10.position = wallv3;
+	//wallver10.normal = wallnormal2;
+	//wallver11.position = wallv6;
+	//wallver11.normal = wallnormal2;
+	//wallver12.position = wallv5;
+	//wallver12.normal = wallnormal2;
+	//wallver13.position = wallv5;
+	//wallver13.normal = wallnormal3;
+	//wallver14.position = wallv6;
+	//wallver14.normal = wallnormal3;
+	//wallver15.position = wallv7;
+	//wallver15.normal = wallnormal3;
+	//wallver16.position = wallv5;
+	//wallver16.normal = wallnormal3;
+	//wallver17.position = wallv7;
+	//wallver17.normal = wallnormal3;
+	//wallver18.position = wallv8;
+	//wallver18.normal = wallnormal3;
+	////上
+	//wallver19.position = wallv5;
+	//wallver19.normal = wallnormal4;
+	//wallver20.position = wallv3;
+	//wallver20.normal = wallnormal4;
+	//wallver21.position = wallv2;
+	//wallver21.normal = wallnormal4;
+	//wallver22.position = wallv2;
+	//wallver22.normal = wallnormal4;
+	//wallver23.position = wallv8;
+	//wallver23.normal = wallnormal4;
+	//wallver24.position = wallv5;
+	//wallver24.normal = wallnormal4;
+	////下
+	//wallver25.position = wallv1;
+	//wallver25.normal = wallnormal5;
+	//wallver26.position = wallv4;
+	//wallver26.normal = wallnormal5;
+	//wallver27.position = wallv6;
+	//wallver27.normal = wallnormal5;
+	//wallver28.position = wallv1;
+	//wallver28.normal = wallnormal5;
+	//wallver29.position = wallv7;
+	//wallver29.normal = wallnormal5;
+	//wallver30.position = wallv6;
+	//wallver30.normal = wallnormal5;
+	//wallData.push_back(wallver1);
+	//wallData.push_back(wallver2);
+	//wallData.push_back(wallver3);
+	//wallData.push_back(wallver4);
+	//wallData.push_back(wallver5);
+	//wallData.push_back(wallver6);
+	//wallData.push_back(wallver7);
+	//wallData.push_back(wallver8);
+	//wallData.push_back(wallver9);
+	//wallData.push_back(wallver10);
+	//wallData.push_back(wallver11);
+	//wallData.push_back(wallver12);
+	//wallData.push_back(wallver13);
+	//wallData.push_back(wallver14);
+	//wallData.push_back(wallver15);
+	//wallData.push_back(wallver16);
+	//wallData.push_back(wallver17);
+	//wallData.push_back(wallver18);
+	//wallData.push_back(wallver19);
+	//wallData.push_back(wallver20);
+	//wallData.push_back(wallver21);
+	//wallData.push_back(wallver22);
+	//wallData.push_back(wallver23);
+	//wallData.push_back(wallver24);
+	//wallData.push_back(wallver25);
+	//wallData.push_back(wallver26);
+	//wallData.push_back(wallver27);
+	//wallData.push_back(wallver28);
+	//wallData.push_back(wallver29);
+	//wallData.push_back(wallver30);
 
 	//扫面花瓶
 	/*vector<Vertex> vertDatavase;
@@ -197,8 +269,8 @@ int main(int argc, char** argv)
 	v2 = vec3(0.0f, 1.0f, 0.0f);
 	v3 = vec3(0.0f, 0.0f, 0.0f);
 	v4 = vec3(-1.0f, 0.0f, 0.0f);
-	vec3 normal1 = normalize(cross(v2 - v1, v3 - v1));
-	vec3 normal2 = normalize(cross(v4 - v1, v3 - v1));
+	vec3 normal1 = cross(v2 - v1, v3 - v1);
+	vec3 normal2 = cross(v4 - v1, v3 - v1);
 	
 	Vertex ver1, ver2, ver3, ver4, ver5, ver6, ver7, ver8, ver9, ver10, ver11, ver12;
 	ver1.position = v1;
@@ -240,12 +312,14 @@ int main(int argc, char** argv)
 	vertData1.push_back(ver12);*/
 
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
-	Shader shaderdragon("cube.vertex", "cube.frag");
-	Shader shader("cube.vertex", "cube.frag");
-	Shader shader1("cube.vertex", "cube.frag");
-	Shader shaderChair("cube.vertex", "cube.frag");
+	glEnable(GL_CULL_FACE);
+
+	//Shader shaderdragon("cube.vertex", "cube.frag");
+	/*Shader shader("cube.vertex", "cube.frag");*/
+	Shader shaderLight("cube.vertex", "cube.frag");
+	/*Shader shaderChair("cube.vertex", "cube.frag");
 	Shader shaderearth("cube.vertex", "cube.frag");
+	Shader shaderwall("cube.vertex", "cube.frag");*/
 	// 开始主循环
 	while (!glfwWindowShouldClose(window))
 	{
@@ -255,107 +329,107 @@ int main(int argc, char** argv)
 		// 清除颜色缓冲区 重置为指定颜色
 		glClearColor(0.18f, 0.04f, 0.14f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		Mesh mesh(vertData);
-		Mesh mesh1(vertData1);
-		Mesh meshChair(ChairvertData);
-		Mesh meshEarth(earthvertData);
-		Mesh meshdragon(dragonvertData);
-
-		shaderdragon.use();
-
-		glm::mat4 projectiondragon = glm::perspective(camera.mouse_zoom, //→缩放
-			(GLfloat)(WINDOW_WIDTH) / WINDOW_HEIGHT, 1.0f, 100.0f); // 投影矩阵
-		glm::mat4 viewdragon = camera.getViewMatrix(); // 视变换矩阵 →lookAt  主要移动旋转在这里
-
-		glm::mat4 projection_viewdragon = projectiondragon*viewdragon;
-		glUniformMatrix4fv(glGetUniformLocation(shaderdragon.programId, "projection_view"),
-			1, GL_FALSE, glm::value_ptr(projection_viewdragon));
-
-		glm::mat4 modeldragon;
-		modeldragon = glm::translate(modeldragon, glm::vec3(-0.2f, -0.10f, 0.0f));
-		modeldragon = glm::scale(modeldragon, glm::vec3(0.1f, 0.1f, 0.1f));
-		//modeldragon = glm::rotate(modeldragon, 0.55f, glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shaderdragon.programId, "model"),
-			1, GL_FALSE, glm::value_ptr(modeldragon));
-
-		shader.use();
-
+		
+		//Mesh meshwall(wallData);
+		//Mesh mesh(vertData);
+		Mesh meshLight(vertDataLight);//light
+		//Mesh meshChair(ChairvertData);
+		//Mesh meshEarth(earthvertData);
+		//Mesh meshdragon(dragonvertData);
+		
 		glm::mat4 projection = glm::perspective(camera.mouse_zoom, //→缩放
 			(GLfloat)(WINDOW_WIDTH) / WINDOW_HEIGHT, 1.0f, 100.0f); // 投影矩阵
 		glm::mat4 view = camera.getViewMatrix(); // 视变换矩阵 →lookAt  主要移动旋转在这里
-
 		glm::mat4 projection_view = projection*view;
-		glUniformMatrix4fv(glGetUniformLocation(shader.programId, "projection_view"),
+
+		//shaderwall.use();
+
+		//glUniformMatrix4fv(glGetUniformLocation(shaderwall.programId, "projection_view"),
+		//	1, GL_FALSE, glm::value_ptr(projection_view));
+
+		//glm::mat4 modelwall;
+		////modelwall = glm::translate(modelwall, glm::vec3(-0.2f, -0.10f, 0.0f));
+		////modelwall = glm::scale(modelwall, glm::vec3(0.1f, 0.1f, 0.1f));
+		//modelwall = glm::rotate(modelwall, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(glGetUniformLocation(shaderwall.programId, "model"),
+		//	1, GL_FALSE, glm::value_ptr(modelwall));
+
+		//shaderdragon.use();
+		/*glUniformMatrix4fv(glGetUniformLocation(shaderdragon.programId, "projection_view"),
 			1, GL_FALSE, glm::value_ptr(projection_view));
+		glm::mat4 modeldragon;
+		modeldragon = glm::translate(modeldragon, glm::vec3(-0.2f, -0.10f, 0.0f));
+		modeldragon = glm::scale(modeldragon, glm::vec3(0.1f, 0.1f, 0.1f));
+		modeldragon = glm::rotate(modeldragon, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderdragon.programId, "model"),
+			1, GL_FALSE, glm::value_ptr(modeldragon));*/
 
-		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.0005f, 0.0005f, 0.0005f));
-		model = glm::rotate(model, 0.55f, glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"),
-			1, GL_FALSE, glm::value_ptr(model));
+		//shader.use();
+		//glUniformMatrix4fv(glGetUniformLocation(shader.programId, "projection_view"),
+		//	1, GL_FALSE, glm::value_ptr(projection_view));
+		//glm::mat4 model;
+		//model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
+		//model = glm::scale(model, glm::vec3(0.0005f, 0.0005f, 0.0005f));
+		//model = glm::rotate(model, angley+0.55f, glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"),
+		//	1, GL_FALSE, glm::value_ptr(model));
 
-		shader1.use();
-		glm::mat4 projection1 = glm::perspective(camera.mouse_zoom, //→缩放
-			(GLfloat)(WINDOW_WIDTH) / WINDOW_HEIGHT, 1.0f, 100.0f); // 投影矩阵
-		glm::mat4 view1 = camera.getViewMatrix(); // 视变换矩阵 →lookAt  主要移动旋转在这里
-		glm::mat4 projection_view1 = projection1*view1;
-		glUniformMatrix4fv(glGetUniformLocation(shader1.programId, "projection_view"),
-			1, GL_FALSE, glm::value_ptr(projection_view1));
-		glm::mat4 model1;
-		model1 = glm::translate(model1, glm::vec3(0.0f, 0.8f, 0.0f));
-		model1 = glm::scale(model1, glm::vec3(0.1f, 0.1f, 0.1f));
-		//model = glm::rotate(model, anglex, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader1.programId, "model"),
-			1, GL_FALSE, glm::value_ptr(model1));
+		shaderLight.use();
+	
+		glUniformMatrix4fv(glGetUniformLocation(shaderLight.programId, "projection_view"),
+			1, GL_FALSE, glm::value_ptr(projection_view));
+		glm::mat4 modelLight;
+		modelLight = glm::translate(modelLight, glm::vec3(0.0f, 0.4f, 0.0f));
+		modelLight = glm::scale(modelLight, glm::vec3(0.1f, 0.1f, 0.1f));
+		modelLight = glm::rotate(modelLight, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderLight.programId, "model"),
+			1, GL_FALSE, glm::value_ptr(modelLight));
 
-		shaderChair.use(); 
-		glm::mat4 projection2 = glm::perspective(camera.mouse_zoom, //→缩放
-			(GLfloat)(WINDOW_WIDTH) / WINDOW_HEIGHT, 1.0f, 100.0f); // 投影矩阵
-		glm::mat4 view2 = camera.getViewMatrix(); // 视变换矩阵 →lookAt  主要移动旋转在这里
-		glm::mat4 projection_view2 = projection2*view2;
-		glUniformMatrix4fv(glGetUniformLocation(shaderChair.programId, "projection_view"),
-			1, GL_FALSE, glm::value_ptr(projection_view2));
-		glm::mat4 model2;
-		model2 = glm::translate(model2, glm::vec3(-0.6f, -0.3f, 0.0f));
-		model2 = glm::scale(model2, glm::vec3(0.0003f, 0.0003f, 0.0003f));
-		//model = glm::rotate(model, anglex, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shaderChair.programId, "model"),
-			1, GL_FALSE, glm::value_ptr(model2));
+		//shaderChair.use(); 
+		
+		//glUniformMatrix4fv(glGetUniformLocation(shaderChair.programId, "projection_view"),
+		//	1, GL_FALSE, glm::value_ptr(projection_view));
+		//glm::mat4 model2;
+		//model2 = glm::translate(model2, glm::vec3(-0.6f, -0.3f, 0.0f));
+		//model2 = glm::scale(model2, glm::vec3(0.0003f, 0.0003f, 0.0003f));
+		//model2 = glm::rotate(model2, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(glGetUniformLocation(shaderChair.programId, "model"),
+		//	1, GL_FALSE, glm::value_ptr(model2));
 
-		shaderearth.use();
-		glm::mat4 projection3 = glm::perspective(camera.mouse_zoom, //→缩放
-			(GLfloat)(WINDOW_WIDTH) / WINDOW_HEIGHT, 1.0f, 100.0f); // 投影矩阵
-		glm::mat4 view3 = camera.getViewMatrix(); // 视变换矩阵 →lookAt  主要移动旋转在这里
-		glm::mat4 projection_view3 = projection3*view3;
-		glUniformMatrix4fv(glGetUniformLocation(shaderearth.programId, "projection_view"),
-			1, GL_FALSE, glm::value_ptr(projection_view3));
-		glm::mat4 model3;
-		model3 = glm::translate(model3, glm::vec3(0.0f, -0.13f, 0.0f));
-		model3 = glm::scale(model3, glm::vec3(0.005f, 0.005f, 0.005f));
-		//model = glm::rotate(model, anglex, glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shaderearth.programId, "model"),
-			1, GL_FALSE, glm::value_ptr(model3));
+		//shaderearth.use();
+	
+		//glUniformMatrix4fv(glGetUniformLocation(shaderearth.programId, "projection_view"),
+		//	1, GL_FALSE, glm::value_ptr(projection_view));
+		//glm::mat4 model3;
+		//model3 = glm::translate(model3, glm::vec3(0.0f, -0.13f, 0.0f));
+		//model3 = glm::scale(model3, glm::vec3(0.005f, 0.005f, 0.005f));
+		//model3 = glm::rotate(model3, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+		//glUniformMatrix4fv(glGetUniformLocation(shaderearth.programId, "model"),
+		//	1, GL_FALSE, glm::value_ptr(model3));
 
 		//光源位置
-		GLint lightPosLoc = glGetUniformLocation(shader.programId, "lightPos");
-		GLint lightPosLoc1 = glGetUniformLocation(shader1.programId, "lightPos");
-		GLint lightPosLoc2 = glGetUniformLocation(shaderChair.programId, "lightPos");
+		/*GLint lightPosLoc = glGetUniformLocation(shader.programId, "lightPos");*/
+		GLint lightPosLocLight = glGetUniformLocation(shaderLight.programId, "lightPos");
+	/*	GLint lightPosLoc2 = glGetUniformLocation(shaderChair.programId, "lightPos");
 		GLint lightPosLoc3 = glGetUniformLocation(shaderearth.programId, "lightPos");
-		GLint lightPosLoc4 = glGetUniformLocation(shaderearth.programId, "lightPos");
+		GLint lightPosLoc5 = glGetUniformLocation(shaderwall.programId, "lightPos");
+		GLint lightPosLocDragon = glGetUniformLocation(shaderdragon.programId, "lightPos");*/
 		//glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
-		glUniform3f(lightPosLoc, 0, 2, 0);
-		glUniform3f(lightPosLoc1, 0, 2, 0);
-		glUniform3f(lightPosLoc2, 0, 2, 0);
-		glUniform3f(lightPosLoc3, 0, 2, 0);
-		glUniform3f(lightPosLoc4, 0, 2, 0);
+	/*	glUniform3f(lightPosLoc, 0, 0, 2);*/
+		glUniform3f(lightPosLocLight, 0, 0, 2);
+		/*glUniform3f(lightPosLoc2, 0, 0, 2);
+		glUniform3f(lightPosLoc3, 0, 0, 2);
+		glUniform3f(lightPosLoc5, 0, 0, 2);
+		glUniform3f(lightPosLocDragon, 0, 0, 2);*/
+		
+
 		// 这里填写场景绘制代码
-		mesh.draw(shader); // 绘制物体
-		meshChair.draw(shaderChair); // 绘制物体
-		mesh1.draw(shader1); // 绘制物体
-		meshEarth.draw(shaderearth); // 绘制物体
-		meshdragon.draw(shaderdragon);
+		//mesh.draw(shader); // 绘制物体
+		//meshChair.draw(shaderChair); // 绘制物体
+		meshLight.draw(shaderLight); // 绘制物体
+		//meshEarth.draw(shaderearth); // 绘制物体
+		//meshwall.draw(shaderwall);
+		//meshdragon.draw(shaderdragon);
 
 		glBindVertexArray(0);
 		glUseProgram(0);
@@ -384,7 +458,6 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 	}
 	else if (mode == 1)
 	{
-
 		GLfloat xoffset = lastX - xpos;
 		GLfloat yoffset = lastY - ypos;
 
@@ -396,9 +469,7 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 
 		lastX = xpos;
 		lastY = ypos;
-
 	}
-
 }
 
 // 由相机辅助类处理鼠标滚轮控制

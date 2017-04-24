@@ -3,8 +3,8 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 
-uniform mat4 projection;//投影矩阵
-uniform mat4 view;//观察矩阵
+//uniform mat4 projection;//投影矩阵
+//uniform mat4 view;//观察矩阵
 uniform mat4 projection_view;
 
 uniform mat4 model;

@@ -14,9 +14,6 @@
 #include <sstream>
 #include <algorithm>
 #include <map>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 //#include "shader.h"
 
 using namespace glm;
@@ -36,6 +33,15 @@ struct VertexCombineIndex
 	GLuint posIndex;
 	GLuint textCoordIndex;
 	GLuint normIndex;
+};
+
+struct SumNorStruct
+{
+	vec3 position;
+	vec2 texCoords;
+	vec3 normal;
+	vec3 sumnormal;
+	GLint sum = 0;
 };
 
 // 表示一个用于渲染的最小实体
@@ -113,21 +119,23 @@ public:
 
 class MyObjLoader
 {
-	std::vector<VertexCombineIndex> vertComIndices;
-	std::vector<glm::vec3> temp_vertices;
-	std::vector<glm::vec2> temp_textCoords;
-	std::vector<glm::vec3> temp_normals;
+	vector<vec2> temp_textCoords;
+	vector<vec3> temp_normals;
+
+	vector<SumNorStruct> Vertex_tempVector;
+	vector<Vertex> Vertex_Vector;
+
+	int v1, v2, v3;
+	int faceCount = 0;
+	vec3 normal;
 
 public:
 	bool loadFromFile(const char* path,
 		vector<Vertex>& vertData)
-	{
-		vertComIndices.clear();
-		temp_vertices.clear();
+	{	
 		temp_textCoords.clear();
 		temp_normals.clear();
-		vector<Vertex> vertData1;//按顶点顺序存的带有法向量的顶点列表；
-		vec3 normal1;
+		Vertex_tempVector.clear();
 
 		std::ifstream file(path);
 		if (!file)
@@ -148,7 +156,6 @@ public:
 				s >> v.x;
 				s >> v.y;
 				v.y = -v.y;  // 注意这里加载的dds纹理 要对y进行反转
-				//v = normalize(v);
 				temp_textCoords.push_back(v);
 			}
 			else if (line.substr(0, 2) == "vn") // 顶点法向量数据
@@ -156,7 +163,6 @@ public:
 				std::istringstream s(line.substr(2));
 				glm::vec3 v;
 				s >> v.x; s >> v.y; s >> v.z;
-				v = normalize(v);
 				temp_normals.push_back(v);
 			}
 			else if (line.substr(0, 1) == "v") // 顶点位置数据
@@ -164,21 +170,25 @@ public:
 				std::istringstream s(line.substr(2));
 				glm::vec3 v;
 				s >> v.x; s >> v.y; s >> v.z;
-				//v = normalize(v);
-				temp_vertices.push_back(v);
+			
+				SumNorStruct sumnorStruct;
+				sumnorStruct.position = v;
+				Vertex_tempVector.push_back(sumnorStruct);
+				
+				Vertex vertex;
+				vertex.position = v;
+				Vertex_Vector.push_back(vertex);
 			}
 			else if (line.substr(0, 1) == "f") // 面数据
 			{
-				if (!strchr(line.c_str(), '/')){
-					
+				if (!strchr(line.c_str(), '/'))
+				{	
 					std::istringstream vtns(line.substr(2));
 					std::string vtn;
-
-					while (vtns >> vtn) // 处理一行中多个顶点属性
-					{   
-						
-						VertexCombineIndex vertComIndex;
-						///std::replace(vtn.begin(), vtn.end(), '/', ' ');
+					while (vtns >> vtn) // 只有顶点坐标
+					{   	
+						int vertComIndex;
+						//std::replace(vtn.begin(), vtn.end(), '/', ' ');
 						std::istringstream ivtn(vtn);
 						if (vtn.find("  ") != std::string::npos) // 没有纹理数据
 						{
@@ -186,20 +196,39 @@ public:
 								<< path << std::endl;
 							return false;
 						}
-						ivtn >> vertComIndex.posIndex;
+						ivtn >> vertComIndex;
+						vertComIndex--;
 						
-						//if (vertComIndex.posIndex)
-						vertComIndex.posIndex--;
-						
-						vertComIndices.push_back(vertComIndex);
+						switch (faceCount % 3)
+						{
+						case 0:
+							v1 = vertComIndex;
+							break;
+						case 1:
+							v2 = vertComIndex;
+							break;
+						case 2:
+							v3 = vertComIndex;
+							normal = cross(Vertex_tempVector[v2].position - Vertex_tempVector[v1].position, Vertex_tempVector[v3].position - Vertex_tempVector[v1].position);
+							Vertex_tempVector[v1].sumnormal += normal;
+							Vertex_tempVector[v2].sumnormal += normal;
+							Vertex_tempVector[v3].sumnormal += normal;
+							Vertex_tempVector[v1].sum++;
+							Vertex_tempVector[v2].sum++;
+							Vertex_tempVector[v3].sum++;
+							break;
+						default:
+							break;
+						}
+
+						faceCount++;
 					}
-				}
-				else{
+				} else {
 					std::istringstream vtns(line.substr(2));
 					std::string vtn;
 					while (vtns >> vtn) // 处理一行中多个顶点属性
 					{
-						VertexCombineIndex vertComIndex;
+						int positionIndex, textcoorIndex, normIndex;
 						std::replace(vtn.begin(), vtn.end(), '/', ' ');
 						std::istringstream ivtn(vtn);
 						if (vtn.find("  ") != std::string::npos) // 没有纹理数据
@@ -208,15 +237,16 @@ public:
 								<< path << std::endl;
 							return false;
 						}
-						ivtn >> vertComIndex.posIndex
-							>> vertComIndex.textCoordIndex
-							>> vertComIndex.normIndex;
-						//if (vertComIndex.posIndex)
-						vertComIndex.posIndex--;
-						vertComIndex.textCoordIndex--;
-						vertComIndex.normIndex--;
-
-						vertComIndices.push_back(vertComIndex);
+						
+						ivtn >> positionIndex
+						>> textcoorIndex
+						>> normIndex;
+					
+						positionIndex--;
+						textcoorIndex--;
+						normIndex--;
+						Vertex_Vector[positionIndex].normal = temp_normals[normIndex];
+						Vertex_Vector[positionIndex].texCoords = temp_textCoords[textcoorIndex];
 					}
 				}
 				
@@ -225,53 +255,31 @@ public:
 
 		if (temp_normals.size() > 0)
 		{
-			for (std::vector<GLuint>::size_type i = 0; i < vertComIndices.size(); ++i)
-			{
-				Vertex vert;
-				VertexCombineIndex comIndex = vertComIndices[i];
-
-				vert.position = temp_vertices[comIndex.posIndex];
-				vert.texCoords = temp_textCoords[comIndex.textCoordIndex];
-				vert.normal = temp_normals[comIndex.normIndex];
-
-				vertData.push_back(vert);
-			}
+			vertData = Vertex_Vector;
 		}
 		else {
-			int a = 0;
 			glm::vec3 normal;
 			Vertex v1, v2, v3;
-			for (std::vector<GLuint>::size_type i = 0; i < vertComIndices.size(); ++i)
+			for (std::vector<GLuint>::size_type i = 0; i < Vertex_tempVector.size(); ++i)
 			{
-				a++;
-				if (a % 3 == 1){
-					v1.position = temp_vertices[vertComIndices[i].posIndex];
-				}
-				else if (a % 3 == 2){
-					v2.position = temp_vertices[vertComIndices[i].posIndex];
-				}
-					
-				else if (a % 3 == 0)
-				{
-					v3.position = temp_vertices[vertComIndices[i].posIndex];
-					normal = glm::normalize(cross(v2.position - v1.position, v3.position - v1.position));
-					v1.normal = normal;
-					v2.normal = normal;
-					v3.normal = normal;
-					vertData.push_back(v1);
-					vertData.push_back(v2);
-					vertData.push_back(v3);
-				}
+				Vertex vertex;
+				SumNorStruct sumnorstruct = Vertex_tempVector[i];
 
-				
+				vertex.position = sumnorstruct.position;
+				int sum = sumnorstruct.sum;
+				vec3 sumnormal = sumnorstruct.sumnormal;
+				sumnormal /= sum;
+
+				vertex.normal = sumnormal;
+
+				vertData.push_back(vertex);
+	
 			}
 		}
-			
 
-
-		
 		return true;
 	}
+
 
 };
 
