@@ -72,8 +72,12 @@
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="chairF.frag" />
     <None Include="cube.frag" />
     <None Include="cube.vertex" />
+    <None Include="dragon.frag" />
+    <None Include="earthBack.frag" />
+    <None Include="light.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

@@ -68,9 +68,9 @@ public:
 		TargetPos = glm::vec3(-x, -y, 0);
 	}
 
-	void handleRotation(GLdouble x, GLdouble y)
+	void handleRotation(GLdouble x)
 	{
-		Position = glm::vec3(glm::sin(x * 180), glm::sin(y * 90), glm::cos(x * 180));
+		Position = glm::vec3(sin(x/2 * 90)*2, 0, cos(x/2 * 90)*2);
 		//Viewup = ;
 		//std::cout << "x : " << Position.x << "y : " << Position.y << std::endl;
 	}

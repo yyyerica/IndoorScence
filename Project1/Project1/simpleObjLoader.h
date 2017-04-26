@@ -50,17 +50,17 @@ class Mesh
 public:
 	void draw(Shader& shader) // 绘制Mesh
 	{
-		shader.use();
 		glBindVertexArray(this->VAOId);
+		shader.use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, this->textureId);
 		glUniform1i(glGetUniformLocation(shader.programId, "tex"), 0);
 
-		/*glDrawArrays(GL_TRIANGLES, 0, this->vertData.size());*/
 		glDrawArrays(GL_TRIANGLES, 0, this->vertData.size());
 
 		glBindVertexArray(0);
 		glUseProgram(0);
+		
 	}
 	Mesh(){}
 
@@ -83,6 +83,28 @@ public:
 			std::cout << " vert data saved in file:" << fileName << std::endl;
 		}
 	}
+
+	Mesh(const std::vector<Vertex>& vertData, GLint textureId, bool bShowData = false) // 构造一个Mesh
+	{
+		this->vertData = vertData;
+		this->textureId = textureId;
+		this->setupMesh();
+		if (bShowData)
+		{
+			const char * fileName = "vert-data.txt";
+			std::ofstream file(fileName);
+			for (std::vector<Vertex>::const_iterator it = this->vertData.begin(); it != this->vertData.end(); ++it)
+			{
+				file << glm::to_string(it->position) << ","
+					<< glm::to_string(it->texCoords) << ","
+					<< glm::to_string(it->normal) << std::endl;
+			}
+			file.close();
+			std::cout << " vert data saved in file:" << fileName << std::endl;
+		}
+	}
+
+
 	~Mesh()
 	{
 		glDeleteVertexArrays(1, &this->VAOId);
@@ -102,14 +124,21 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, this->VBOId);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* this->vertData.size(),
 			&this->vertData[0], GL_STATIC_DRAW);
-		// 顶点位置属性
+		
+
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
 			sizeof(Vertex), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
 			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
 		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -125,6 +154,8 @@ class MyObjLoader
 	vector<SumNorStruct> Vertex_tempVector;
 	vector<Vertex> Vertex_Vector;
 
+	vector<int> position_indecies;
+
 	int v1, v2, v3;
 	int faceCount = 0;
 	vec3 normal;
@@ -136,6 +167,8 @@ public:
 		temp_textCoords.clear();
 		temp_normals.clear();
 		Vertex_tempVector.clear();
+		Vertex_Vector.clear();
+		position_indecies.clear();
 
 		std::ifstream file(path);
 		if (!file)
@@ -198,6 +231,8 @@ public:
 						}
 						ivtn >> vertComIndex;
 						vertComIndex--;
+
+						position_indecies.push_back(vertComIndex);
 						
 						switch (faceCount % 3)
 						{
@@ -247,6 +282,8 @@ public:
 						normIndex--;
 						Vertex_Vector[positionIndex].normal = temp_normals[normIndex];
 						Vertex_Vector[positionIndex].texCoords = temp_textCoords[textcoorIndex];
+						
+						position_indecies.push_back(positionIndex);
 					}
 				}
 				
@@ -255,16 +292,17 @@ public:
 
 		if (temp_normals.size() > 0)
 		{
-			vertData = Vertex_Vector;
+			for (int i = 0; i < position_indecies.size(); i++)
+			{
+				vertData.push_back(Vertex_Vector[position_indecies[i]]);
+			}
+				
 		}
 		else {
-			glm::vec3 normal;
-			Vertex v1, v2, v3;
-			for (std::vector<GLuint>::size_type i = 0; i < Vertex_tempVector.size(); ++i)
+			Vertex vertex;
+			for (int i = 0; i < position_indecies.size(); i++)
 			{
-				Vertex vertex;
-				SumNorStruct sumnorstruct = Vertex_tempVector[i];
-
+				SumNorStruct sumnorstruct = Vertex_tempVector[position_indecies[i]];
 				vertex.position = sumnorstruct.position;
 				int sum = sumnorstruct.sum;
 				vec3 sumnormal = sumnorstruct.sumnormal;
@@ -273,7 +311,6 @@ public:
 				vertex.normal = sumnormal;
 
 				vertData.push_back(vertex);
-	
 			}
 		}
 

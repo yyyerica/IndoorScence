@@ -4,6 +4,7 @@
 #include <GLEW/glew.h>
 #include <iostream>
 #include <fstream>
+#include <SOIL.h>
 
 class TextureHelper
 {

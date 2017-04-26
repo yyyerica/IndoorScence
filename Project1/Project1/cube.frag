@@ -1,7 +1,7 @@
 #version 330 core
 
-//in vec2 TextCoord;
-//uniform sampler2D tex;
+in vec2 TextCoord;
+uniform sampler2D tex;
 in vec3 Normal;//一个顶点对应一个法向量
 in vec3 FragPos;
 
@@ -9,17 +9,14 @@ out vec4 color;
 
 uniform vec3 lightPos;
 
+
 void main()
 {
 	vec3 objectColor = vec3(1.0,0.0,0.0);
-	//color = texture(tex, TextCoord);
-	//color = vec4(0.5, 1.0, 1.0, 1.0);
 	vec3 lightColor = vec3(1.0,1.0,1.0);
 //环境光
 	float ambientStrength = 0.1f;
 	vec3 ambient = ambientStrength * lightColor;//环境光颜色
-	//vec3 result = ambient * objectColor;
-	//color = vec4(result,1.0f);
 
 //漫反射光
 	vec3 norm = normalize(Normal);
@@ -34,5 +31,6 @@ void main()
 	
 	//既然我们有了一个环境光照颜色和一个散射光颜色，我们把它们相加，然后把结果乘以物体的颜色，来获得片段最后的输出颜色。
 	vec3 result = (ambient + diffuse) * objectColor;
-	color = vec4(result, 1.0f);
+	//color = vec4(result, 1.0f) * texture(tex, TextCoord);
+	color = texture(tex, TextCoord);
 }

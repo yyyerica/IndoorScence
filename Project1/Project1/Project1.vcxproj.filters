@@ -35,6 +35,18 @@
     <None Include="cube.vertex">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="dragon.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="light.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="chairF.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="earthBack.frag">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
