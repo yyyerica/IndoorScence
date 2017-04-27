@@ -78,6 +78,8 @@
     <None Include="dragon.frag" />
     <None Include="earthBack.frag" />
     <None Include="light.frag" />
+    <None Include="shadow.frag" />
+    <None Include="shadow.vertex" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
