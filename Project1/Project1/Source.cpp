@@ -60,7 +60,6 @@ mat4 shadowmat();
 
 int main(int argc, char** argv)
 {
-
 	if (!glfwInit())	// 初始化glfw库
 	{
 		std::cout << "Error::GLFW could not initialize GLFW!" << std::endl;
@@ -307,7 +306,7 @@ int main(int argc, char** argv)
 		mat4 projection_view = projection*view;
 		mat4 shadowModel = shadowmat();
 
-		if (mode == 0)
+		if (mode1 == 0)
 		{
 			Mesh meshwallfront(wallDatafront, texturewallfront);
 			shaderwallfront.use();
@@ -565,23 +564,8 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 	}
 	else if (mode == 1)
 	{
-		//物体本身旋转
-		//GLfloat xoffset = lastX - xpos;
-		//GLfloat yoffset = lastY - ypos;
-
-		//xoffset *= 0.05;
-		//yoffset *= 0.05;
-
-		//angley += 360 * (GLfloat)xoffset / (GLfloat)WINDOW_WIDTH;//根据屏幕上鼠标滑动的距离来设置旋转的角度  
-		//anglex += 360 * (GLfloat)yoffset / (GLfloat)WINDOW_HEIGHT;//根据屏幕上鼠标滑动的距离来设置旋转的角度  
-
-		//lastX = xpos;
-		//lastY = ypos;
-
 		//视点移动旋转
 		camera.handleRotation(x);
-
-
 	}
 }
 
@@ -620,21 +604,19 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS) switch (button)
 	{
+	case GLFW_MOUSE_BUTTON_LEFT:
 		if (mode1 == 0) //日光
 		{
-			//texturewallfront = TextureHelper::load2DTexture("window.png");
 			lightspot = vec3(0.0f, 0.0f, -2.0f);
-			//meshwallfront = new Mesh(wallDatafront, texturewallfront);
 			mode1 = 1;
 		}
 
 		else if (mode1 == 1) //灯光
 		{
-			//texturewallfront = TextureHelper::load2DTexture("windownight.png");
 			lightspot = vec3(0.0f, 1.0f, 0.0f);
-			//meshwallfront(wallDatafront, texturewallfront);
 			mode1 = 0;
 		}
+		break;
 	case GLFW_MOUSE_BUTTON_RIGHT:
 		if (mode == 0) //日光
 		{

@@ -194,7 +194,7 @@ public:
 
 	void handleRotation(GLdouble x)
 	{
-		Position = glm::vec3(glm::sin(x * 180)*2, 0, glm::cos(x * 180)*2);
+		Position = glm::vec3(glm::sin(x * 90)*2, 0, glm::cos(x * 90)*2);
 		//Viewup = ;
 		//std::cout << "x : " << Position.x << "y : " << Position.y << std::endl;
 	}
