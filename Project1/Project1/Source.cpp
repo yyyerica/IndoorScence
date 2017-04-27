@@ -39,6 +39,7 @@ GLfloat angley = 0.0f;
 GLfloat anglex = 0.0f;
 
 int mode = 0;
+int mode1 = 0;
 
 //光源
 vec3 lightspot = vec3(0.0f, 0.0f, -2.0f);
@@ -46,15 +47,13 @@ GLint texturewallfront, texturewallfront1;
 vector<Vertex> wallDatafront;
 
 
-// 鼠标按下事件
-//void cursor_position_callback(GLFWwindow* window, double x, double y);
 // 鼠标移动回调函数原型声明
 void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
 // 鼠标滚轮回调函数原型声明
 void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 // 左右按键
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode);
+//void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode);
 vector<Vertex> getvase();
 mat4 shadowmat();
 
@@ -87,15 +86,14 @@ int main(int argc, char** argv)
 
 	// 创建的窗口的context指定为当前context
 	glfwMakeContextCurrent(window);
-	glfwSetKeyCallback(window, keyFun);
+	//glfwSetKeyCallback(window, keyFun);
 	// 注册鼠标移动事件回调函数
-	//glfwSetCursorPosCallback(window, mouse_move_callback);
+	glfwSetCursorPosCallback(window, mouse_move_callback);
 	// 注册鼠标滚轮事件回调函数
-	//glfwSetScrollCallback(window, mouse_scroll_callback);
+	glfwSetScrollCallback(window, mouse_scroll_callback);
 	//// 注册按下事件回调函数
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
-	// 鼠标拖动事件
-	//glfwSetCursorPosCallback(window, cursor_position_callback);
+
 
 	void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode);
 	
@@ -557,41 +555,41 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-//void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
-//{
-//	double x = (2 * xpos) / WINDOW_WIDTH - 1;
-//	double y = 1 - (2 * ypos) / WINDOW_HEIGHT;
-//	if (mode == 0)
-//	{
-//		camera.handleMouseTranslation(x, y);
-//	}
-//	else if (mode == 1)
-//	{
-//		//物体本身旋转
-//		//GLfloat xoffset = lastX - xpos;
-//		//GLfloat yoffset = lastY - ypos;
-//
-//		//xoffset *= 0.05;
-//		//yoffset *= 0.05;
-//
-//		//angley += 360 * (GLfloat)xoffset / (GLfloat)WINDOW_WIDTH;//根据屏幕上鼠标滑动的距离来设置旋转的角度  
-//		//anglex += 360 * (GLfloat)yoffset / (GLfloat)WINDOW_HEIGHT;//根据屏幕上鼠标滑动的距离来设置旋转的角度  
-//
-//		//lastX = xpos;
-//		//lastY = ypos;
-//
-//		//视点移动旋转
-//		camera.handleRotation(x);
-//
-//
-//	}
-//}
+void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	double x = (2 * xpos) / WINDOW_WIDTH - 1;
+	double y = 1 - (2 * ypos) / WINDOW_HEIGHT;
+	if (mode == 0)
+	{
+		camera.handleMouseTranslation(x, y);
+	}
+	else if (mode == 1)
+	{
+		//物体本身旋转
+		//GLfloat xoffset = lastX - xpos;
+		//GLfloat yoffset = lastY - ypos;
+
+		//xoffset *= 0.05;
+		//yoffset *= 0.05;
+
+		//angley += 360 * (GLfloat)xoffset / (GLfloat)WINDOW_WIDTH;//根据屏幕上鼠标滑动的距离来设置旋转的角度  
+		//anglex += 360 * (GLfloat)yoffset / (GLfloat)WINDOW_HEIGHT;//根据屏幕上鼠标滑动的距离来设置旋转的角度  
+
+		//lastX = xpos;
+		//lastY = ypos;
+
+		//视点移动旋转
+		camera.handleRotation(x);
+
+
+	}
+}
 
 // 由相机辅助类处理鼠标滚轮控制
-//void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-//{
-//	camera.handleMouseScroll(yoffset);
-//}
+void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.handleMouseScroll(yoffset);
+}
 
 mat4 shadowmat()
 {
@@ -622,25 +620,29 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS) switch (button)
 	{
-	//case GLFW_MOUSE_BUTTON_LEFT:
-	//	//拉普拉斯
-	//	//Rightclick = true;
-	//	break;
-	case GLFW_MOUSE_BUTTON_RIGHT:
-		//切换灯光
-		if (mode == 0) //日光
+		if (mode1 == 0) //日光
 		{
 			//texturewallfront = TextureHelper::load2DTexture("window.png");
 			lightspot = vec3(0.0f, 0.0f, -2.0f);
 			//meshwallfront = new Mesh(wallDatafront, texturewallfront);
-			mode = 1;
+			mode1 = 1;
 		}
-			
-		else if (mode == 1) //灯光
+
+		else if (mode1 == 1) //灯光
 		{
 			//texturewallfront = TextureHelper::load2DTexture("windownight.png");
 			lightspot = vec3(0.0f, 1.0f, 0.0f);
 			//meshwallfront(wallDatafront, texturewallfront);
+			mode1 = 0;
+		}
+	case GLFW_MOUSE_BUTTON_RIGHT:
+		if (mode == 0) //日光
+		{
+			mode = 1;
+		}
+
+		else if (mode == 1) //灯光
+		{
 			mode = 0;
 		}
 
@@ -652,51 +654,51 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 
-void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode){
-
-	if (nAction == GLFW_PRESS)
-	{
-		//平移
-		if (nKey == GLFW_KEY_Q)
-		{
-			camera.handleTranslation(FORWARD);
-		}
-		else if (nKey == GLFW_KEY_E)
-		{
-			camera.handleTranslation(BACKWARD);
-		}
-		else if (nKey == GLFW_KEY_A)
-		{
-			camera.handleTranslation(RIGHT);
-		}
-		else if (nKey == GLFW_KEY_D)
-		{
-			camera.handleTranslation(LEFT);
-		}
-		else if (nKey == GLFW_KEY_W)
-		{
-			camera.handleTranslation(DOWN);
-		}
-		else if (nKey == GLFW_KEY_S)
-		{
-			camera.handleTranslation(UP);
-		}
-
-		//旋转
-		else if (nKey == GLFW_KEY_Z) //y轴顺时针
-		{
-			camera.handleTranslation(yAnticlockwise);
-		}
-		else if (nKey == GLFW_KEY_C)//y轴逆时针
-		{
-			camera.handleTranslation(yClockwise);
-		}
-		else if (nKey == GLFW_KEY_X)    // 还原视图
-		{
-			camera.handleTranslation(REBOUND);
-		}
-	}
-}
+//void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode){
+//
+//	if (nAction == GLFW_PRESS)
+//	{
+//		//平移
+//		if (nKey == GLFW_KEY_Q)
+//		{
+//			camera.handleTranslation(FORWARD);
+//		}
+//		else if (nKey == GLFW_KEY_E)
+//		{
+//			camera.handleTranslation(BACKWARD);
+//		}
+//		else if (nKey == GLFW_KEY_A)
+//		{
+//			camera.handleTranslation(RIGHT);
+//		}
+//		else if (nKey == GLFW_KEY_D)
+//		{
+//			camera.handleTranslation(LEFT);
+//		}
+//		else if (nKey == GLFW_KEY_W)
+//		{
+//			camera.handleTranslation(DOWN);
+//		}
+//		else if (nKey == GLFW_KEY_S)
+//		{
+//			camera.handleTranslation(UP);
+//		}
+//
+//		//旋转
+//		else if (nKey == GLFW_KEY_Z) //y轴顺时针
+//		{
+//			camera.handleTranslation(yAnticlockwise);
+//		}
+//		else if (nKey == GLFW_KEY_C)//y轴逆时针
+//		{
+//			camera.handleTranslation(yClockwise);
+//		}
+//		else if (nKey == GLFW_KEY_X)    // 还原视图
+//		{
+//			camera.handleTranslation(REBOUND);
+//		}
+//	}
+//}
 
 vector<Vertex> getvase() 
 {
