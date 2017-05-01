@@ -37,7 +37,7 @@ public:
 	//}
 
 	Camera()
-		:Position(glm::vec3(0.0, 0.0, 2.0)), TargetPos(glm::vec3(0.0, 0.0, 0.0)),
+		:Position(glm::vec3(0.0, 0.0, radius)), TargetPos(glm::vec3(0.0, 0.0, 0.0)),
 		Viewup(glm::vec3(0.0, 1.0, 0.0)), mouse_zoom(MOUSE_ZOOM)
 	{
 
@@ -64,13 +64,13 @@ public:
 
 	void handleMouseTranslation(GLdouble x, GLdouble y)
 	{
-		Position = glm::vec3(-x, -y, 2);
+		Position = glm::vec3(-x, -y, radius);
 		TargetPos = glm::vec3(-x, -y, 0);
 	}
 
 	void handleRotation(GLdouble x)
 	{
-		Position = glm::vec3(glm::sin(x * 90) * 2, 0, glm::cos(x * 90) * 2);
+		Position = glm::vec3(glm::sin(x * 90) * radius, 0, glm::cos(x * 90) * radius);
 		//Viewup = ;
 		//std::cout << "x : " << Position.x << "y : " << Position.y << std::endl;
 	}
@@ -80,6 +80,7 @@ public:
 	glm::vec3 Position, Viewup, TargetPos;
 	GLfloat fRotateAngle = 0.0f;
 	GLfloat mouse_zoom;
+	GLfloat radius = 4;
 	//GLfloat xAngle, yAngle;
 };
 

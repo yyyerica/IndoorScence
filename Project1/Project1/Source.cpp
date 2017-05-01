@@ -28,8 +28,19 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 GLuint loadTexture(GLchar* path);
 void RenderScene(Shader &shader);
 void RenderDRAGON(Shader &shader);
-void RenderCUBE(Shader &shader, vector<Vertex>);
-void RenderQuad();
+void RenderTable(Shader &shader, vector<Vertex>, GLuint);
+void RenderLight(Shader &shader, vector<Vertex>, GLuint);
+void RenderVase(Shader &shader, vector<Vertex>, GLuint);
+void RenderWallFront(Shader &shader, vector<Vertex>);
+void RenderWallLeft(Shader &shader, vector<Vertex>, GLuint);
+void RenderWallRight(Shader &shader, vector<Vertex>, GLuint);
+void RenderWallUp(Shader &shader, vector<Vertex>, GLuint);
+void RenderChairFront(Shader &shader, vector<Vertex>);
+void RenderChairBack(Shader &shader, vector<Vertex>, GLuint);
+void RenderEarthFront(Shader &shader, vector<Vertex>, GLuint);
+void RenderEarthBack(Shader &shader, vector<Vertex>);
+
+void loadtextures();
 
 vector<Vertex> getvase();
 // Camera
@@ -42,13 +53,16 @@ GLfloat lastFrame = 0.0f;
 int mode = 0;
 int mode1 = 0;
 
-glm::vec3 lightspot(0.0f, 0.0f, 3.0f);
+GLuint depthMap;
+
+glm::vec3 lightspot(0.0f, 2.0f, 0.0f);
 // Options
 GLboolean shadows = true;
 
 // Global variables
-GLuint woodTexture;
-GLuint planeVAO;
+GLuint woodTexture, tableTexture, lightTexture, wallfrontTexture, wallfrontTextureM, vaseTexture, wallroundTexture, wallupTexture, ChairBackTexture, EarthFrontTexture;
+GLuint planeVAO, DragonVAO, LightVAO, TableVAO, VaseVAO, WallfrontVAO, WallrightVAO, WallleftVAO, WallupVAO, ChairFrontVAO, ChairBackVAO, EarthFrontVAO, EarthBackVAO;
+GLuint planeVBO, DragonVBO, LightVBO, TableVBO, VaseVBO, WallfrontVBO, WallrightVBO, WallleftVBO, WallupVBO, ChairFrontVBO, ChairBackVBO, EarthFrontVBO, EarthBackVBO;
 
 glm::mat4 model = glm::mat4();
 
@@ -196,15 +210,14 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	// Load textures
-	woodTexture = loadTexture("wallupdown.jpg");
+	loadtextures();
 
 	// Configure depth map FBO
 	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
 	// - Create depth texture
-	GLuint depthMap;
+	
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 
@@ -273,15 +286,14 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(shader.programId, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
 		// Enable/Disable shadows by pressing 'SPACE'
 		glUniform1i(glGetUniformLocation(shader.programId, "shadows"), shadows);
-		glActiveTexture(GL_TEXTURE0);
+		/*glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, woodTexture);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glBindTexture(GL_TEXTURE_2D, depthMap);*/
 		RenderScene(shader);
 
 		// Swap the buffers
 		glfwSwapBuffers(window);
-		model = glm::mat4();
 	}
 
 	glfwTerminate();
@@ -291,33 +303,43 @@ int main()
 void RenderScene(Shader &shader)
 {
 	// Floor
-	glm::mat4 model;
-	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, woodTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glm::mat4 floormodel;
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(floormodel));
 	glBindVertexArray(planeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, wallDatadown.size());
 	glBindVertexArray(0);
 	// Cubes
 	RenderDRAGON(shader);
-	RenderCUBE(shader,tableData);
+	RenderTable(shader, tableData, tableTexture);
+	RenderLight(shader, vertDataLight, lightTexture);
+	RenderVase(shader, VaseData, vaseTexture);
+	RenderWallFront(shader, wallDatafront);
+	RenderWallLeft(shader, wallDataleft, wallroundTexture);
+	RenderWallRight(shader, wallDataright, wallroundTexture);
+	RenderWallUp(shader, wallDataup, wallupTexture);
+	RenderChairFront(shader, ChairFrontvertData);
+	RenderChairBack(shader, ChairBackvertData, ChairBackTexture);
+	RenderEarthFront(shader, earthvertData, EarthFrontTexture);
+	RenderEarthBack(shader, earthvertData2);
 }
 
-
-
-// RenderCube() Renders a 1x1 3D cube in NDC.
-GLuint DRAGONVAO = 0;
-GLuint DRAGONVBO = 0;
 void RenderDRAGON(Shader &shader)
 {
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.5f));
-	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	glm::mat4 model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-0.2f, -0.2f, -0.3f));
+	model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	// Initialize (if necessary)
-	if (DRAGONVAO == 0)
+	if (DragonVAO == 0)
 	{
-		glGenVertexArrays(1, &DRAGONVAO);
-		glGenBuffers(1, &DRAGONVBO);
-		glBindVertexArray(DRAGONVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, DRAGONVBO);
+		glGenVertexArrays(1, &DragonVAO);
+		glGenBuffers(1, &DragonVBO);
+		glBindVertexArray(DragonVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, DragonVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* dragonvertData.size(),
 			&dragonvertData[0], GL_STATIC_DRAW);
 		
@@ -325,29 +347,35 @@ void RenderDRAGON(Shader &shader)
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
 			sizeof(Vertex), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
+		
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
 	// Render Cube
-	glBindVertexArray(DRAGONVAO);
+	glBindVertexArray(DragonVAO);
 	glDrawArrays(GL_TRIANGLES, 0, dragonvertData.size());
 	glBindVertexArray(0);
 }
 
-GLuint TABLEVAO = 0;
-GLuint TABLEVBO = 0;
-void RenderCUBE(Shader &shader, vector<Vertex> cubeData)
+void RenderTable(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 {
-	model = glm::mat4();
-	model = glm::scale(model, glm::vec3(0.005f, 0.005f, 0.005f));
-	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	if (TABLEVAO == 0)
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modeltable = glm::mat4();
+	modeltable = glm::rotate(modeltable, 0.55f, glm::vec3(0.0f, 1.0f, 0.0f));
+	modeltable = glm::translate(modeltable, glm::vec3(0.0f, -0.6f, -0.3f));
+	modeltable = glm::scale(modeltable, glm::vec3(0.0005f, 0.0005f, 0.0005f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modeltable));
+	if (TableVAO == 0)
 	{
-		glGenVertexArrays(1, &TABLEVAO);
-		glGenBuffers(1, &TABLEVBO);
-		glBindVertexArray(TABLEVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, TABLEVBO);
+		glGenVertexArrays(1, &TableVAO);
+		glGenBuffers(1, &TableVBO);
+		glBindVertexArray(TableVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, TableVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
 			&cubeData[0], GL_STATIC_DRAW);
 
@@ -367,38 +395,419 @@ void RenderCUBE(Shader &shader, vector<Vertex> cubeData)
 		glBindVertexArray(0);
 	}
 	// Render Cube
-	glBindVertexArray(TABLEVAO);
+	glBindVertexArray(TableVAO);
 	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
 	glBindVertexArray(0);
 
 }
 
+void RenderLight(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 Lightmodel = glm::mat4();
+	Lightmodel = glm::translate(Lightmodel, glm::vec3(0.0f, 0.8f, -0.3f));
+	Lightmodel = glm::scale(Lightmodel, glm::vec3(0.1f, 0.1f, 0.1f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(Lightmodel));
+	if (LightVAO == 0)
+	{
+		glGenVertexArrays(1, &LightVAO);
+		glGenBuffers(1, &LightVBO);
+		glBindVertexArray(LightVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, LightVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(LightVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderVase(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modelvase = glm::mat4();
+	modelvase = glm::translate(modelvase, glm::vec3(0.0f, -0.25f, -0.1f));
+	modelvase = glm::scale(modelvase, glm::vec3(0.05f, 0.05f, 0.05f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelvase));
+	if (VaseVAO == 0)
+	{
+		glGenVertexArrays(1, &VaseVAO);
+		glGenBuffers(1, &VaseVBO);
+		glBindVertexArray(VaseVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VaseVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(VaseVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+}
+
+void RenderWallFront(Shader &shader, vector<Vertex> cubeData)
+{
+	if (mode1 == 0) //日
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, wallfrontTextureM);
+	}
+	else
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, wallfrontTexture);
+	}
+	glm::mat4 modelwallfront = glm::mat4();
+	//model = glm::translate(model, glm::vec3(0.0f, 0.8f, -0.3f));
+	//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelwallfront));
+	if (WallfrontVAO == 0)
+	{
+		glGenVertexArrays(1, &WallfrontVAO);
+		glGenBuffers(1, &WallfrontVBO);
+		glBindVertexArray(WallfrontVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, WallfrontVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(WallfrontVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderWallLeft(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modelwallleft = glm::mat4();
+	//model = glm::translate(model, glm::vec3(0.0f, 0.8f, -0.3f));
+	//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelwallleft));
+	if (WallleftVAO == 0)
+	{
+		glGenVertexArrays(1, &WallleftVAO);
+		glGenBuffers(1, &WallleftVBO);
+		glBindVertexArray(WallleftVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, WallleftVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(WallleftVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderWallRight(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modelwallright = glm::mat4();
+	//model = glm::translate(model, glm::vec3(0.0f, 0.8f, -0.3f));
+	//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelwallright));
+	if (WallrightVAO == 0)
+	{
+		glGenVertexArrays(1, &WallrightVAO);
+		glGenBuffers(1, &WallrightVBO);
+		glBindVertexArray(WallrightVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, WallrightVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(WallrightVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderWallUp(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modelwallup = glm::mat4();
+	//model = glm::translate(model, glm::vec3(0.0f, 0.8f, -0.3f));
+	//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelwallup));
+	if (WallupVAO == 0)
+	{
+		glGenVertexArrays(1, &WallupVAO);
+		glGenBuffers(1, &WallupVBO);
+		glBindVertexArray(WallupVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, WallupVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(WallupVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderChairFront(Shader &shader, vector<Vertex> cubeData)
+{
+	glm::mat4 modelChairFront;
+	modelChairFront = glm::translate(modelChairFront, glm::vec3(-0.6f, -0.6f, -0.3f));
+	modelChairFront = glm::scale(modelChairFront, glm::vec3(0.0006f, 0.0006f, 0.0006f));
+	//model2 = glm::rotate(model2, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelChairFront));
+	if (ChairFrontVAO == 0)
+	{
+		glGenVertexArrays(1, &ChairFrontVAO);
+		glGenBuffers(1, &ChairFrontVBO);
+		glBindVertexArray(ChairFrontVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, ChairFrontVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(ChairFrontVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderChairBack(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modelChairBack;
+	modelChairBack = glm::translate(modelChairBack, glm::vec3(-0.6f, -0.6f, -0.3f));
+	modelChairBack = glm::scale(modelChairBack, glm::vec3(0.0006f, 0.0006f, 0.0006f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelChairBack));
+	if (ChairBackVAO == 0)
+	{
+		glGenVertexArrays(1, &ChairBackVAO);
+		glGenBuffers(1, &ChairBackVBO);
+		glBindVertexArray(ChairBackVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, ChairBackVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(ChairBackVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderEarthFront(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modelEarthFront;
+	modelEarthFront = glm::translate(modelEarthFront, glm::vec3(0.0f, -0.23f, -0.3f));
+	modelEarthFront = glm::scale(modelEarthFront, glm::vec3(0.005f, 0.005f, 0.005f));
+	//modelEarthFront = glm::rotate(modelEarthFront, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelEarthFront));
+	if (EarthFrontVAO == 0)
+	{
+		glGenVertexArrays(1, &EarthFrontVAO);
+		glGenBuffers(1, &EarthFrontVBO);
+		glBindVertexArray(EarthFrontVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, EarthFrontVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(EarthFrontVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void RenderEarthBack(Shader &shader, vector<Vertex> cubeData)
+{
+	glm::mat4 modelEarthBack;
+	modelEarthBack = glm::translate(modelEarthBack, glm::vec3(0.0f, -0.23f, -0.3f));
+	modelEarthBack = glm::scale(modelEarthBack, glm::vec3(0.005f, 0.005f, 0.005f));
+	//model2 = glm::rotate(model2, angley, glm::vec3(0.0f, 1.0f, 0.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelEarthBack));
+	if (EarthBackVAO == 0)
+	{
+		glGenVertexArrays(1, &EarthBackVAO);
+		glGenBuffers(1, &EarthBackVBO);
+		glBindVertexArray(EarthBackVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, EarthBackVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(EarthBackVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+
+}
+
+void loadtextures()
+{
+	woodTexture = loadTexture("wallupdown.jpg");
+	tableTexture = loadTexture("table.jpg");
+	lightTexture = loadTexture("wallupdown.jpg");
+	wallfrontTextureM = loadTexture("window.png");
+	wallfrontTexture = loadTexture("windownight.png");
+	vaseTexture = loadTexture("vase.jpg");
+	wallroundTexture = loadTexture("wallround.jpg");
+	wallupTexture = loadTexture("wallupdown.jpg");
+	ChairBackTexture = loadTexture("chair.jpg");
+	EarthFrontTexture = loadTexture("earth.jpg");
+}
 
 // This function loads a texture from file. Note: texture loading functions like these are usually 
 // managed by a 'Resource Manager' that manages all resources (like textures, models, audio). 
 // For learning purposes we'll just define it as a utility function.
 GLuint loadTexture(GLchar* path)
 {
-	// Generate texture ID and load texture data 
-	//GLuint textureID;
-	//glGenTextures(1, &textureID);
-	//int width, height;
-	//unsigned char* image = SOIL_load_image(path, &width, &height, 0, SOIL_LOAD_RGB);
-	//// Assign texture to ID
-	//glBindTexture(GL_TEXTURE_2D, textureID);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	//glGenerateMipmap(GL_TEXTURE_2D);
-
-	//// Parameters
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//SOIL_free_image_data(image);
-	//return textureID;
-	
-	
 	// Step1 创建并绑定纹理对象
 	GLuint textureId = 0;
 	glGenTextures(1, &textureId);

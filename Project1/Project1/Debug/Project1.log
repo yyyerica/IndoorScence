@@ -1,4 +1,4 @@
-﻿Build started 2017/4/30 23:44:12.
+﻿Build started 2017/5/1 22:45:20.
      1>Project "F:\Codes\opengl\IndoorScence\Project1\Project1\Project1.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          B:\vs2013update5\install\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
@@ -6,16 +6,16 @@
      1>f:\codes\opengl\indoorscence\project1\project1\camera.h(58): warning C4244: '-=' : conversion from 'double' to 'GLfloat', possible loss of data
      1>f:\codes\opengl\indoorscence\project1\project1\simpleobjloader.h(196): warning C4018: '<' : signed/unsigned mismatch
      1>f:\codes\opengl\indoorscence\project1\project1\simpleobjloader.h(204): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(231): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(239): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(240): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(241): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(460): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(517): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(518): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(548): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(557): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(558): warning C4018: '<' : signed/unsigned mismatch
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(244): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(252): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(253): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(254): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(869): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(926): warning C4018: '<' : signed/unsigned mismatch
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(927): warning C4018: '<' : signed/unsigned mismatch
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(957): warning C4018: '<' : signed/unsigned mismatch
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(966): warning C4018: '<' : signed/unsigned mismatch
+     1>f:\codes\opengl\indoorscence\project1\project1\source.cpp(967): warning C4018: '<' : signed/unsigned mismatch
        Link:
          B:\vs2013update5\install\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Codes\opengl\IndoorScence\Project1\Debug\Project1.exe" /INCREMENTAL /NOLOGO opengl32.lib glfw3.lib glew32s.lib SOIL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\Codes\opengl\IndoorScence\Project1\Debug\Project1.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Codes\opengl\IndoorScence\Project1\Debug\Project1.lib" /MACHINE:X86 Debug\Source.obj
      1>LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
@@ -43,4 +43,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.25
+Time Elapsed 00:00:01.23

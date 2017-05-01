@@ -1,61 +1,67 @@
-﻿Build started 2017/4/27 16:21:31.
+﻿Build started 2017/5/1 19:00:52.
      1>Project "F:\Codes\opengl\IndoorScence\Project1\Project1\Project1.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          B:\vs2013update5\install\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
          Source.cpp
-     1>f:\codes\opengl\indoorscence\project1\project1\camera.h(302): warning C4305: '+=' : truncation from 'double' to 'GLfloat'
-     1>f:\codes\opengl\indoorscence\project1\project1\camera.h(311): warning C4305: '-=' : truncation from 'double' to 'GLfloat'
-     1>f:\codes\opengl\indoorscence\project1\project1\simpleObjLoader.h(295): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\codes\opengl\indoorscence\project1\project1\simpleObjLoader.h(303): warning C4018: '<' : signed/unsigned mismatch
-     1>Source.cpp(723): warning C4018: '<' : signed/unsigned mismatch
-     1>Source.cpp(724): warning C4018: '<' : signed/unsigned mismatch
-     1>Source.cpp(754): warning C4018: '<' : signed/unsigned mismatch
-     1>Source.cpp(763): warning C4018: '<' : signed/unsigned mismatch
-     1>Source.cpp(764): warning C4018: '<' : signed/unsigned mismatch
+     1>f:\codes\opengl\indoorscence\project1\project1\camera.h(58): warning C4244: '-=' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>f:\codes\opengl\indoorscence\project1\project1\simpleObjLoader.h(196): warning C4018: '<' : signed/unsigned mismatch
+     1>f:\codes\opengl\indoorscence\project1\project1\simpleObjLoader.h(204): warning C4018: '<' : signed/unsigned mismatch
+     1>Source.cpp(232): warning C4244: 'initializing' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>Source.cpp(240): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>Source.cpp(241): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>Source.cpp(242): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>Source.cpp(501): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>Source.cpp(558): warning C4018: '<' : signed/unsigned mismatch
+     1>Source.cpp(559): warning C4018: '<' : signed/unsigned mismatch
+     1>Source.cpp(589): warning C4018: '<' : signed/unsigned mismatch
+     1>Source.cpp(598): warning C4018: '<' : signed/unsigned mismatch
+     1>Source.cpp(599): warning C4018: '<' : signed/unsigned mismatch
        Link:
          B:\vs2013update5\install\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Codes\opengl\IndoorScence\Project1\Release\Project1.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\Codes\opengl\IndoorScence\Project1\Release\Project1.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Codes\opengl\IndoorScence\Project1\Release\Project1.lib" /MACHINE:X86 /SAFESEH Release\Source.obj
      1>Source.obj : error LNK2001: unresolved external symbol _glfwWindowShouldClose
      1>Source.obj : error LNK2001: unresolved external symbol ___glewBindBuffer
-     1>Source.obj : error LNK2001: unresolved external symbol ___glewDeleteVertexArrays
      1>Source.obj : error LNK2001: unresolved external symbol ___glewActiveTexture
      1>Source.obj : error LNK2001: unresolved external symbol __imp__glClear@4
-     1>Source.obj : error LNK2001: unresolved external symbol _glfwSetKeyCallback
      1>Source.obj : error LNK2001: unresolved external symbol _glfwInit
      1>Source.obj : error LNK2001: unresolved external symbol __imp__glClearColor@16
      1>Source.obj : error LNK2001: unresolved external symbol ___glewVertexAttribPointer
+     1>Source.obj : error LNK2001: unresolved external symbol _glfwSetCursorPosCallback
      1>Source.obj : error LNK2001: unresolved external symbol ___glewDeleteShader
      1>Source.obj : error LNK2001: unresolved external symbol ___glewCreateShader
      1>Source.obj : error LNK2001: unresolved external symbol ___glewGetShaderInfoLog
      1>Source.obj : error LNK2001: unresolved external symbol _glewInit@0
      1>Source.obj : error LNK2001: unresolved external symbol ___glewLinkProgram
      1>Source.obj : error LNK2001: unresolved external symbol ___glewCompileShader
-     1>Source.obj : error LNK2001: unresolved external symbol _glewGetString@4
-     1>Source.obj : error LNK2001: unresolved external symbol ___glewUniform3f
      1>Source.obj : error LNK2001: unresolved external symbol ___glewGenVertexArrays
      1>Source.obj : error LNK2001: unresolved external symbol ___glewDetachShader
      1>Source.obj : error LNK2001: unresolved external symbol __imp__glBindTexture@8
+     1>Source.obj : error LNK2001: unresolved external symbol ___glewFramebufferTexture2D
      1>Source.obj : error LNK2001: unresolved external symbol _glfwCreateWindow
+     1>Source.obj : error LNK2001: unresolved external symbol __imp__glTexParameterfv@12
      1>Source.obj : error LNK2001: unresolved external symbol __imp__glTexImage2D@36
      1>Source.obj : error LNK2001: unresolved external symbol _glfwMakeContextCurrent
+     1>Source.obj : error LNK2001: unresolved external symbol _glfwSetScrollCallback
      1>Source.obj : error LNK2001: unresolved external symbol ___glewUseProgram
      1>Source.obj : error LNK2001: unresolved external symbol ___glewShaderSource
-     1>Source.obj : error LNK2001: unresolved external symbol __imp__glShadeModel@4
      1>Source.obj : error LNK2001: unresolved external symbol ___glewBufferData
      1>Source.obj : error LNK2001: unresolved external symbol ___glewBindVertexArray
      1>Source.obj : error LNK2001: unresolved external symbol __imp__glDrawArrays@12
      1>Source.obj : error LNK2001: unresolved external symbol _SOIL_free_image_data
      1>Source.obj : error LNK2001: unresolved external symbol __imp__glTexParameteri@12
-     1>Source.obj : error LNK2001: unresolved external symbol _glewGetErrorString@4
+     1>Source.obj : error LNK2001: unresolved external symbol __imp__glDrawBuffer@4
+     1>Source.obj : error LNK2001: unresolved external symbol __imp__glReadBuffer@4
      1>Source.obj : error LNK2001: unresolved external symbol ___glewUniformMatrix4fv
-     1>Source.obj : error LNK2001: unresolved external symbol __imp__glBlendFunc@8
      1>Source.obj : error LNK2001: unresolved external symbol _SOIL_load_image
+     1>Source.obj : error LNK2001: unresolved external symbol ___glewGenFramebuffers
      1>Source.obj : error LNK2001: unresolved external symbol _glewExperimental
-     1>Source.obj : error LNK2001: unresolved external symbol ___glewDeleteBuffers
      1>Source.obj : error LNK2001: unresolved external symbol _glfwSwapBuffers
+     1>Source.obj : error LNK2001: unresolved external symbol ___glewBindFramebuffer
      1>Source.obj : error LNK2001: unresolved external symbol ___glewGenBuffers
      1>Source.obj : error LNK2001: unresolved external symbol _glfwWindowHint
+     1>Source.obj : error LNK2001: unresolved external symbol _glfwGetTime
      1>Source.obj : error LNK2001: unresolved external symbol ___glewGetProgramiv
      1>Source.obj : error LNK2001: unresolved external symbol _glfwSetMouseButtonCallback
+     1>Source.obj : error LNK2001: unresolved external symbol ___glewUniform3fv
      1>Source.obj : error LNK2001: unresolved external symbol __imp__glViewport@16
      1>Source.obj : error LNK2001: unresolved external symbol ___glewGenerateMipmap
      1>Source.obj : error LNK2001: unresolved external symbol ___glewDeleteProgram
@@ -71,9 +77,9 @@
      1>Source.obj : error LNK2001: unresolved external symbol ___glewEnableVertexAttribArray
      1>Source.obj : error LNK2001: unresolved external symbol ___glewAttachShader
      1>Source.obj : error LNK2001: unresolved external symbol ___glewGetUniformLocation
-     1>F:\Codes\opengl\IndoorScence\Project1\Release\Project1.exe : fatal error LNK1120: 57 unresolved externals
+     1>F:\Codes\opengl\IndoorScence\Project1\Release\Project1.exe : fatal error LNK1120: 59 unresolved externals
      1>Done Building Project "F:\Codes\opengl\IndoorScence\Project1\Project1\Project1.vcxproj" (Build target(s)) -- FAILED.
 
 Build FAILED.
 
-Time Elapsed 00:00:01.01
+Time Elapsed 00:00:00.95
