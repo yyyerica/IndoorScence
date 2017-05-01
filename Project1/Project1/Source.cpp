@@ -55,7 +55,7 @@ int mode1 = 0;
 
 GLuint depthMap;
 
-glm::vec3 lightspot(0.0f, 2.0f, 0.0f);
+glm::vec3 lightspot;
 // Options
 GLboolean shadows = true;
 
@@ -248,10 +248,19 @@ int main()
 		// Check and call events
 		glfwPollEvents();
 
+		if (mode1 == 0)
+		{ 
+			lightspot = vec3(0.0f, 0.3f, -300.0f);
+		}
+		else
+		{
+			lightspot = vec3(0.0f, 1.0f, 0.0f);
+		}
+
 		// Change light position over time
-		lightspot.x = sin(glfwGetTime()) * 3.0f;
+		/*lightspot.x = sin(glfwGetTime()) * 3.0f;
 		lightspot.z = cos(glfwGetTime()) * 2.0f;
-		lightspot.y = 5.0 + cos(glfwGetTime()) * 1.0f;
+		lightspot.y = 5.0 + cos(glfwGetTime()) * 1.0f;*/
 
 		// 1. Render depth of scene to texture (from light's perspective)
 		// - Get light projection/view matrix.
@@ -260,7 +269,8 @@ int main()
 		GLfloat near_plane = 1.0f, far_plane = 7.5f;
 		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 		//lightProjection = glm::perspective(45.0f, (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // Note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene.
-		lightView = glm::lookAt(lightspot, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+		/*lightView = glm::lookAt(lightspot, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));*/
+		lightView = glm::lookAt(lightspot, glm::vec3(0.0f), cross(glm::vec3(-3.0f, 0.0f, 0.0f),-lightspot));
 		lightSpaceMatrix = lightProjection * lightView;
 		// - now render scene from light's point of view
 		simpleDepthShader.Use();
@@ -330,7 +340,7 @@ void RenderScene(Shader &shader)
 void RenderDRAGON(Shader &shader)
 {
 	glm::mat4 model = glm::mat4();
-	model = glm::translate(model, glm::vec3(-0.2f, -0.2f, -0.3f));
+	model = glm::translate(model, glm::vec3(-0.4f, -0.2f, -0.3f));
 	model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	// Initialize (if necessary)
@@ -445,7 +455,7 @@ void RenderVase(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures);
 	glm::mat4 modelvase = glm::mat4();
-	modelvase = glm::translate(modelvase, glm::vec3(0.0f, -0.25f, -0.1f));
+	modelvase = glm::translate(modelvase, glm::vec3(-0.2f, -0.25f, -0.1f));
 	modelvase = glm::scale(modelvase, glm::vec3(0.05f, 0.05f, 0.05f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelvase));
 	if (VaseVAO == 0)
@@ -645,7 +655,7 @@ void RenderWallUp(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 void RenderChairFront(Shader &shader, vector<Vertex> cubeData)
 {
 	glm::mat4 modelChairFront;
-	modelChairFront = glm::translate(modelChairFront, glm::vec3(-0.6f, -0.6f, -0.3f));
+	modelChairFront = glm::translate(modelChairFront, glm::vec3(-0.8f, -0.6f, -0.3f));
 	modelChairFront = glm::scale(modelChairFront, glm::vec3(0.0006f, 0.0006f, 0.0006f));
 	//model2 = glm::rotate(model2, angley, glm::vec3(0.0f, 1.0f, 0.0f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelChairFront));
@@ -681,7 +691,7 @@ void RenderChairBack(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures);
 	glm::mat4 modelChairBack;
-	modelChairBack = glm::translate(modelChairBack, glm::vec3(-0.6f, -0.6f, -0.3f));
+	modelChairBack = glm::translate(modelChairBack, glm::vec3(-0.8f, -0.6f, -0.3f));
 	modelChairBack = glm::scale(modelChairBack, glm::vec3(0.0006f, 0.0006f, 0.0006f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelChairBack));
 	if (ChairBackVAO == 0)
@@ -720,7 +730,7 @@ void RenderEarthFront(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures);
 	glm::mat4 modelEarthFront;
-	modelEarthFront = glm::translate(modelEarthFront, glm::vec3(0.0f, -0.23f, -0.3f));
+	modelEarthFront = glm::translate(modelEarthFront, glm::vec3(0.0f, -0.24f, -0.3f));
 	modelEarthFront = glm::scale(modelEarthFront, glm::vec3(0.005f, 0.005f, 0.005f));
 	//modelEarthFront = glm::rotate(modelEarthFront, angley, glm::vec3(0.0f, 1.0f, 0.0f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelEarthFront));
@@ -758,7 +768,7 @@ void RenderEarthFront(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 void RenderEarthBack(Shader &shader, vector<Vertex> cubeData)
 {
 	glm::mat4 modelEarthBack;
-	modelEarthBack = glm::translate(modelEarthBack, glm::vec3(0.0f, -0.23f, -0.3f));
+	modelEarthBack = glm::translate(modelEarthBack, glm::vec3(0.0f, -0.24f, -0.3f));
 	modelEarthBack = glm::scale(modelEarthBack, glm::vec3(0.005f, 0.005f, 0.005f));
 	//model2 = glm::rotate(model2, angley, glm::vec3(0.0f, 1.0f, 0.0f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelEarthBack));
