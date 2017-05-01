@@ -67,22 +67,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="simpleObjLoader.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="chairF.frag" />
-    <None Include="cube.frag" />
-    <None Include="cube.vertex" />
-    <None Include="dragon.frag" />
-    <None Include="earthBack.frag" />
-    <None Include="light.frag" />
-    <None Include="shadow.frag" />
-    <None Include="shadow.vertex" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <None Include="debug_quad.vertex" />
+    <None Include="debug_quad_depth.frag" />
+    <None Include="shadow_mapping.frag" />
+    <None Include="shadow_mapping.vertex" />
+    <None Include="shadow_mapping_depth.frag" />
+    <None Include="shadow_mapping_depth.vertex" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

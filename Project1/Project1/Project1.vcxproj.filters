@@ -27,36 +27,33 @@
     <ClInclude Include="texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cube.frag">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="cube.vertex">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="dragon.frag">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="light.frag">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="chairF.frag">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="earthBack.frag">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="shadow.vertex">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="shadow.frag">
-      <Filter>Source Files</Filter>
-    </None>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="debug_quad.vertex">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="debug_quad_depth.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shadow_mapping.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shadow_mapping.vertex">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shadow_mapping_depth.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shadow_mapping_depth.vertex">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

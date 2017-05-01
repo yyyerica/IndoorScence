@@ -34,7 +34,7 @@ public:
 		fileVec.push_back(ShaderFile(GL_GEOMETRY_SHADER, geometryPath));
 		loadFromFile(fileVec);
 	}
-	void use()
+	void Use()
 	{
 		glUseProgram(this->programId);
 	}

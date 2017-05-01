@@ -1,127 +1,3 @@
-//#ifndef _CAMERA_H_
-//#define _CAMERA_H_
-//
-//#include <iostream>
-//#include <fstream>
-//#include <GLEW/glew.h>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtx/string_cast.hpp>
-//#include <iomanip>      // std::setprecision
-//
-////定义移动方向
-//enum Camera_Movement {
-//	FORWARD,
-//	BACKWARD,
-//	LEFT,
-//	RIGHT,
-//	UP,
-//	DOWN,
-//	yClockwise,
-//	yAnticlockwise,
-//	REBOUND
-//};
-//
-//class Camera
-//{
-//public:
-//	Camera(glm::vec3 pos = glm::vec3(0.0, 0.0, 2.0),
-//		glm::vec3 viewup = glm::vec3(0.0, 1.0, 0.0),
-//		glm::vec3 targetpos = glm::vec3(0.0, 0.0, 0.0))
-//		:Position(pos), TargetPos(targetpos), Viewup(viewup)
-//	{
-//
-//	}
-//
-//
-//
-//public:
-//	// 获取视变换矩阵
-//	glm::mat4 getViewMatrix()
-//	{
-//		return glm::lookAt(this->Position, this->TargetPos, this->Viewup);
-//	}
-//
-//	glm::vec3 direction, vertical;
-//	GLfloat camX, camZ, radius;
-//	void handleTranslation(Camera_Movement Transdirection)
-//	{
-//		switch (Transdirection)
-//		{
-//		case BACKWARD:
-//			// 物体到相机的单位向量
-//			direction = glm::normalize(TargetPos - Position);
-//			direction *= 0.2;   // 移动0.2个单位向量
-//			Position += direction;
-//			break;
-//		case FORWARD:
-//			direction = glm::normalize(TargetPos - Position);
-//			direction *= 0.2;
-//			Position -= direction;
-//			break;
-//		case LEFT:
-//			// 物体到相机的单位向量
-//			direction = glm::normalize(TargetPos - Position);
-//			// 物体到相机的单位向量 与 相机的向上向量相乘,得到垂直向量,即平移向量
-//			vertical = glm::normalize(glm::cross(direction, Viewup));
-//			vertical *= 0.2;
-//			Position += vertical;  // 移动相机位置
-//			TargetPos += vertical; //相机的指向位置也一起平衡(不平移则以原来的目标转圈)
-//			break;
-//		case RIGHT:
-//			direction = glm::normalize(TargetPos - Position);
-//			vertical = glm::normalize(glm::cross(direction, Viewup));
-//			vertical *= 0.2;
-//			Position -= vertical;
-//			TargetPos -= vertical;
-//			break;
-//		case UP:
-//			vertical = Viewup;
-//			vertical *= 0.2;
-//			Position -= vertical;//相机下移
-//			TargetPos -= vertical;
-//			break;
-//		case DOWN:
-//			vertical = Viewup;
-//			vertical *= 0.2;
-//			Position += vertical;
-//			TargetPos += vertical;
-//			break;
-//		case yClockwise:
-//			radius = glm::distance(Position, TargetPos);
-//			fRotateAngle += 0.2;
-//
-//			camX = sin(fRotateAngle) * radius + TargetPos.x;
-//			camZ = cos(fRotateAngle) * radius + TargetPos.z;
-//
-//			Position = glm::vec3(camX, 0.0, camZ);
-//			break;
-//		case yAnticlockwise:
-//			radius = glm::distance(Position, TargetPos);
-//			fRotateAngle -= 0.2;
-//
-//			camX = sin(fRotateAngle) * radius + TargetPos.x;
-//			camZ = cos(fRotateAngle) * radius + TargetPos.z;
-//
-//			Position = glm::vec3(camX, 0.0, camZ);
-//			break;
-//		case REBOUND:
-//			Position = glm::vec3(0.0f, 0.0f, 2.0f);
-//			TargetPos = glm::vec3(0.0f, 0.0f, 0.0f);
-//			break;
-//		default:
-//			break;
-//		}
-//	}
-//
-//	//相机属性
-//public:
-//	glm::vec3 Position, Viewup, TargetPos;
-//	GLfloat fRotateAngle = 0.0f;
-//	//GLfloat xAngle, yAngle;
-//};
-//#endif
-
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
@@ -171,7 +47,7 @@ public:
 public:
 
 	// 获取视变换矩阵
-	glm::mat4 getViewMatrix()
+	glm::mat4 GetViewMatrix()
 	{
 		return glm::lookAt(this->Position, this->TargetPos, this->Viewup);
 	}
@@ -194,7 +70,7 @@ public:
 
 	void handleRotation(GLdouble x)
 	{
-		Position = glm::vec3(glm::sin(x * 90)*2, 0, glm::cos(x * 90)*2);
+		Position = glm::vec3(glm::sin(x * 90) * 2, 0, glm::cos(x * 90) * 2);
 		//Viewup = ;
 		//std::cout << "x : " << Position.x << "y : " << Position.y << std::endl;
 	}
