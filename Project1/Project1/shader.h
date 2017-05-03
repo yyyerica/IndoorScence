@@ -85,7 +85,7 @@ private:
 				glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &maxLength);
 				std::vector<GLchar> errLog(maxLength);
 				glGetShaderInfoLog(shaderId, maxLength, &maxLength, &errLog[0]);
-				std::cout << "Error::Shader file [" << shaderFileVec[i].filePath << " ] compiled failed,"
+				std::cout << "Error::Shader file [" << shaderFileVec[i].filePath << "] compiled failed,"
 					<< &errLog[0] << std::endl;
 				bSuccess = false;
 			}

@@ -55,5 +55,8 @@
     <None Include="shadow_mapping_depth.vertex">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="shadow_mappingnotext.frag">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
