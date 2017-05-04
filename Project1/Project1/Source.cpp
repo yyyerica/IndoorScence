@@ -24,6 +24,8 @@ const GLuint SCR_WIDTH = 1200, SCR_HEIGHT = 1000;
 void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
 void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode);
+
 
 GLuint loadTexture(GLchar* path);
 void RenderScene(Shader &shader);
@@ -36,13 +38,14 @@ void RenderWallFront(Shader &shader, vector<Vertex>);
 void RenderWallLeft(Shader &shader, vector<Vertex>, GLuint);
 void RenderWallRight(Shader &shader, vector<Vertex>, GLuint);
 void RenderWallUp(Shader &shader, vector<Vertex>, GLuint);
-void RenderChairFront(Shader &shader, vector<Vertex>);
+void RenderChairFront(Shader &shader, vector<Vertex>, GLuint);
 void RenderChairBack(Shader &shader, vector<Vertex>, GLuint);
 void RenderEarthFront(Shader &shader, vector<Vertex>, GLuint);
 void RenderEarthBack(Shader &shader, vector<Vertex>);
 void RenderTVborder(Shader &shader, vector<Vertex>);
 void RenderTVcenter(Shader &shader, vector<Vertex>, GLuint);
-
+void RenderSofaFront(Shader &shader, vector<Vertex>, GLuint);
+void RenderSofaBack(Shader &shader, vector<Vertex>);
 void loadtextures();
 
 vector<Vertex> getvase();
@@ -63,14 +66,14 @@ glm::vec3 lightspot(0.0f, 1.0f, -2.0f);
 GLboolean shadows = true;
 
 // Global variables
-GLuint woodTexture, tableTexture, lightTexture, wallfrontTexture, wallfrontTextureM, vaseTexture, wallroundTexture, wallupTexture, ChairBackTexture, EarthFrontTexture, tvcentertexture;
-GLuint planeVAO, DragonVAO, LightVAO, TableVAO, VaseVAO, WallfrontVAO, WallrightVAO, WallleftVAO, WallupVAO, ChairFrontVAO, ChairBackVAO, EarthFrontVAO, EarthBackVAO, TVborderVAO, TVcenterVAO;
-GLuint planeVBO, DragonVBO, LightVBO, TableVBO, VaseVBO, WallfrontVBO, WallrightVBO, WallleftVBO, WallupVBO, ChairFrontVBO, ChairBackVBO, EarthFrontVBO, EarthBackVBO, TVborderVBO, TVcenterVBO;
+GLuint woodTexture, tableTexture, lightTexture, wallfrontTexture, wallfrontTextureM, vaseTexture, wallroundTexture, wallupTexture, ChairBackTexture, EarthFrontTexture, tvcentertexture, Sofatexture, ChairFrontTexture;
+GLuint planeVAO, DragonVAO, LightVAO, TableVAO, VaseVAO, WallfrontVAO, WallrightVAO, WallleftVAO, WallupVAO, ChairFrontVAO, ChairBackVAO, EarthFrontVAO, EarthBackVAO, TVborderVAO, TVcenterVAO, SofaFrontVAO, SofaBackVAO;
+GLuint planeVBO, DragonVBO, LightVBO, TableVBO, VaseVBO, WallfrontVBO, WallrightVBO, WallleftVBO, WallupVBO, ChairFrontVBO, ChairBackVBO, EarthFrontVBO, EarthBackVBO, TVborderVBO, TVcenterVBO, SofaFrontVBO, SofaBackVBO;
 
 glm::mat4 model = glm::mat4();
 
 MyObjLoader objloader;
-vector<Vertex> dragonvertData, VaseData, tableData, ChairBackvertData, ChairFrontvertData, vertDataLight, earthvertData, earthvertData2, tvborderData, tvcenterData;
+vector<Vertex> dragonvertData, VaseData, tableData, ChairBackvertData, ChairFrontvertData, vertDataLight, earthvertData, earthvertData2, tvborderData, tvcenterData, SofaFrontData, SofaBackData;
 vector<Vertex> wallDataup, wallDatadown, wallDataleft, wallDataright, wallDatafront;
 // The MAIN function, from here we start our application and run our Game loop
 int main()
@@ -95,6 +98,8 @@ int main()
 	//// 注册按下事件回调函数
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
+	glfwSetKeyCallback(window, keyFun);
+
 	// Initialize GLEW to setup the OpenGL Function pointers
 	glewExperimental = GL_TRUE;
 	glewInit();
@@ -105,6 +110,7 @@ int main()
 	// Setup some OpenGL options
 	glEnable(GL_DEPTH_TEST);
 
+	loadtextures();
 
 	if (!objloader.loadFromFile("dragon.obj", dragonvertData))
 	{
@@ -191,6 +197,18 @@ int main()
 		std::system("pause");
 		exit(-1);
 	}
+	if (!objloader.loadFromFile("SofaFront.obj", SofaFrontData))
+	{
+		std::cerr << "Could not load obj model, exit now.";
+		std::system("pause");
+		exit(-1);
+	}
+	if (!objloader.loadFromFile("SofaBack.obj", SofaBackData))
+	{
+		std::cerr << "Could not load obj model, exit now.";
+		std::system("pause");
+		exit(-1);
+	}
 
 
 
@@ -228,7 +246,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	loadtextures();
+
 	
 
 	     
@@ -354,11 +372,15 @@ void RenderScene(Shader &shader)
 	RenderWallLeft(shader, wallDataleft, wallroundTexture);
 	RenderWallRight(shader, wallDataright, wallroundTexture);
 	RenderWallUp(shader, wallDataup, wallupTexture);
-
+	
 	RenderChairBack(shader, ChairBackvertData, ChairBackTexture);
+	RenderChairFront(shader, ChairFrontvertData, ChairFrontTexture);
+
 	RenderEarthFront(shader, earthvertData, EarthFrontTexture);
 
 	RenderTVcenter(shader, tvcenterData, tvcentertexture);
+
+	RenderSofaFront(shader, SofaFrontData, Sofatexture);
 }
 
 void RenderScenenotext(Shader &shader)
@@ -369,7 +391,8 @@ void RenderScenenotext(Shader &shader)
 	//glDisable(GL_BLEND);
 	
 	RenderEarthBack(shader, earthvertData2);
-	RenderChairFront(shader, ChairFrontvertData);
+	
+	RenderSofaBack(shader, SofaBackData);
 	//glUniform1i(glGetUniformLocation(shader.programId, "alpha"), 0.4);
 }
 
@@ -698,8 +721,10 @@ void RenderWallUp(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 
 }
 
-void RenderChairFront(Shader &shader, vector<Vertex> cubeData)
+void RenderChairFront(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 {
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
 	glm::mat4 modelChairFront; 
 	modelChairFront = glm::translate(modelChairFront, glm::vec3(-0.8f, -0.6f, -0.3f));
 	modelChairFront = glm::rotate(modelChairFront, 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -903,7 +928,7 @@ void RenderTVcenter(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 	
 	modeltvcenter = glm::translate(modeltvcenter, glm::vec3(-1.9f, 0.0f, 0.0f));
 	modeltvcenter = glm::rotate(modeltvcenter, 92.6f, glm::vec3(0.0f, 1.0f, 0.0f));
-	modeltvcenter = glm::scale(modeltvcenter, glm::vec3(0.0009f, 0.0009f, 0.0009f));
+	modeltvcenter = glm::scale(modeltvcenter, glm::vec3(0.00095f, 0.00095f, 0.00095f));
 	//model2 = glm::rotate(model2, angley, glm::vec3(0.0f, 1.0f, 0.0f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modeltvcenter));
 	if (TVcenterVAO == 0)
@@ -936,6 +961,87 @@ void RenderTVcenter(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 	glBindVertexArray(0);
 }
 
+void RenderSofaFront(Shader &shader, vector<Vertex> cubeData, GLuint textures)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures);
+	glm::mat4 modelSofa;
+
+	modelSofa = glm::translate(modelSofa, glm::vec3(1.0f, -0.6f, 0.0f));
+	modelSofa = glm::rotate(modelSofa, 1.66f, glm::vec3(0.0f, 1.0f, 0.0f));
+	modelSofa = glm::scale(modelSofa, glm::vec3(0.007f, 0.007f, 0.007f));
+	
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelSofa));
+	if (SofaFrontVAO == 0)
+	{
+		glGenVertexArrays(1, &SofaFrontVAO);
+		glGenBuffers(1, &SofaFrontVBO);
+		glBindVertexArray(SofaFrontVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, SofaFrontVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(SofaFrontVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+}
+
+void RenderSofaBack(Shader &shader, vector<Vertex> cubeData)
+{
+	glm::mat4 modelSBack = glm::mat4();
+	modelSBack = glm::translate(modelSBack, glm::vec3(1.0f, -0.6f, 0.0f));
+	modelSBack = glm::rotate(modelSBack, 1.66f, glm::vec3(0.0f, 1.0f, 0.0f));
+	modelSBack = glm::scale(modelSBack, glm::vec3(0.007f, 0.007f, 0.007f));
+
+	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modelSBack));
+	// Initialize (if necessary)
+	if (SofaBackVAO == 0)
+	{
+		glGenVertexArrays(1, &SofaBackVAO);
+		glGenBuffers(1, &SofaBackVBO);
+		glBindVertexArray(SofaBackVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, SofaBackVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* cubeData.size(),
+			&cubeData[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(3 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(1);
+
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (GLvoid*)(5 * sizeof(GL_FLOAT)));
+		glEnableVertexAttribArray(2);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// Render Cube
+	glBindVertexArray(SofaBackVAO);
+	glDrawArrays(GL_TRIANGLES, 0, cubeData.size());
+	glBindVertexArray(0);
+	glActiveTexture(0);
+}
+
 void loadtextures()
 {
 	woodTexture = loadTexture("wallupdown.jpg");
@@ -949,6 +1055,8 @@ void loadtextures()
 	ChairBackTexture = loadTexture("chair.jpg");
 	EarthFrontTexture = loadTexture("earth.jpg");
 	tvcentertexture = loadTexture("tvcenter.jpg");
+	Sofatexture = loadTexture("Sofa.jpg");
+	ChairFrontTexture = loadTexture("chairFront.jpg");
 }
 
 // This function loads a texture from file. Note: texture loading functions like these are usually 
@@ -988,6 +1096,8 @@ GLuint loadTexture(GLchar* path)
 bool keys[1024];
 bool keysPressed[1024];
 
+
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -1007,7 +1117,7 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 	else if (mode == 1)
 	{
 		//视点移动旋转
-		camera.handleRotation(x);
+		camera.handleRotation(x*=0.5);
 	}
 }
 
@@ -1036,12 +1146,12 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		}
 		break;
 	case GLFW_MOUSE_BUTTON_RIGHT:
-		if (mode == 0) //日光
+		if (mode == 0) 
 		{
 			mode = 1;
 		}
 
-		else if (mode == 1) //灯光
+		else if (mode == 1) 
 		{
 			mode = 0;
 		}
@@ -1139,4 +1249,50 @@ vector<Vertex> getvase()
 		}
 	}
 	return vese;
+}
+
+void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode){
+
+	if (nAction == GLFW_PRESS)
+	{
+		//平移
+		if (nKey == GLFW_KEY_Q)
+		{
+			camera.handleTranslation(BACKWARD);
+		}
+		else if (nKey == GLFW_KEY_E)
+		{
+			camera.handleTranslation(FORWARD);
+		}
+		else if (nKey == GLFW_KEY_A)
+		{
+			camera.handleTranslation(LEFT);
+		}
+		else if (nKey == GLFW_KEY_D)
+		{
+			camera.handleTranslation(RIGHT);
+		}
+		else if (nKey == GLFW_KEY_W)
+		{
+			camera.handleTranslation(UP);
+		}
+		else if (nKey == GLFW_KEY_S)
+		{
+			camera.handleTranslation(DOWN);
+		}
+
+		//旋转
+		else if (nKey == GLFW_KEY_Z) //y轴顺时针
+		{
+			camera.handleTranslation(yClockwise);
+		}
+		else if (nKey == GLFW_KEY_C)//y轴逆时针
+		{
+			camera.handleTranslation(yAnticlockwise);
+		}
+		else if (nKey == GLFW_KEY_X)    // 还原视图
+		{
+			camera.handleTranslation(REBOUND);
+		}
+	}
 }
