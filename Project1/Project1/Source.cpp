@@ -309,7 +309,7 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(shadernotext.programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 		RenderScenenotext(shadernotext);
-		RenderTVborder(shadernotext, tvcenterData);
+		RenderTVborder(shadernotext, tvborderData);
 
 		shader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(shader.programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
@@ -323,7 +323,7 @@ int main()
 
 		RenderScene(shader);
 		RenderWallFront(shader, wallDatafront);
-		
+		RenderDRAGON(shadernotext);
 		// Swap the buffers
 		glfwSwapBuffers(window);
 	}
@@ -365,7 +365,7 @@ void RenderScenenotext(Shader &shader)
 {	
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_ONE, GL_ONE);
-	RenderDRAGON(shader);
+	
 	//glDisable(GL_BLEND);
 	
 	RenderEarthBack(shader, earthvertData2);
@@ -381,6 +381,10 @@ void RenderDRAGON(Shader &shader)
 	model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	// Initialize (if necessary)
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	
 	if (DragonVAO == 0)
 	{
 		glGenVertexArrays(1, &DragonVAO);
@@ -409,6 +413,8 @@ void RenderDRAGON(Shader &shader)
 	glBindVertexArray(DragonVAO);
 	glDrawArrays(GL_TRIANGLES, 0, dragonvertData.size());
 	glBindVertexArray(0);
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
 void RenderTable(Shader &shader, vector<Vertex> cubeData, GLuint textures)
@@ -854,7 +860,7 @@ void RenderTVborder(Shader &shader, vector<Vertex> cubeData)
 	glm::mat4 tvmodel = glm::mat4();
 	//tvmodel = glm::translate(tvmodel, glm::vec3(-0.4f, -0.2f, -0.3f));
 	tvmodel = glm::translate(tvmodel, glm::vec3(-1.9f, 0.0f, 0.0f));
-	tvmodel = glm::rotate(tvmodel, 92.5f, glm::vec3(0.0f, 1.0f, 0.0f));
+	tvmodel = glm::rotate(tvmodel, 92.6f, glm::vec3(0.0f, 1.0f, 0.0f));
 	tvmodel = glm::scale(tvmodel, glm::vec3(0.001f, 0.001f, 0.001f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(tvmodel));
 	// Initialize (if necessary)
@@ -896,8 +902,8 @@ void RenderTVcenter(Shader &shader, vector<Vertex> cubeData, GLuint textures)
 	glm::mat4 modeltvcenter;
 	
 	modeltvcenter = glm::translate(modeltvcenter, glm::vec3(-1.9f, 0.0f, 0.0f));
-	modeltvcenter = glm::rotate(modeltvcenter, 92.5f, glm::vec3(0.0f, 1.0f, 0.0f));
-	modeltvcenter = glm::scale(modeltvcenter, glm::vec3(0.001f, 0.001f, 0.001f));
+	modeltvcenter = glm::rotate(modeltvcenter, 92.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+	modeltvcenter = glm::scale(modeltvcenter, glm::vec3(0.0009f, 0.0009f, 0.0009f));
 	//model2 = glm::rotate(model2, angley, glm::vec3(0.0f, 1.0f, 0.0f));
 	glUniformMatrix4fv(glGetUniformLocation(shader.programId, "model"), 1, GL_FALSE, glm::value_ptr(modeltvcenter));
 	if (TVcenterVAO == 0)

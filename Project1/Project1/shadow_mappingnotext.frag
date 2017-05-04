@@ -34,5 +34,5 @@ void main()
 	
 	//既然我们有了一个环境光照颜色和一个散射光颜色，我们把它们相加，然后把结果乘以物体的颜色，来获得片段最后的输出颜色。
 	vec3 result = (ambient + diffuse) * objectColor;
-	color = vec4(result, 0.4);
+	color = vec4(result, 0.5);
 }
