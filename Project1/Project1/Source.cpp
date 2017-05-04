@@ -55,7 +55,7 @@ Camera camera;
 // Delta
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
-
+GLboolean rotate1 = false;
 int mode = 0;
 int mode1 = 0;
 
@@ -78,6 +78,7 @@ vector<Vertex> wallDataup, wallDatadown, wallDataleft, wallDataright, wallDatafr
 // The MAIN function, from here we start our application and run our Game loop
 int main()
 {
+
 	// Init GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -250,15 +251,16 @@ int main()
 	
 
 	     
-	// Configure depth map FBO
+	// 为渲染的深度贴图创建一个帧缓冲对象
 	const GLuint SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 	GLuint depthMapFBO;
 	glGenFramebuffers(1, &depthMapFBO);
-	// - Create depth texture
-	
+
+	//创建一个2D纹理，提供给帧缓冲的深度缓冲使用：
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 
+	//只关心深度值，把纹理格式指定为GL_DEPTH_COMPONENT
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -267,6 +269,7 @@ int main()
 	GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
+	//把生成的深度纹理作为帧缓冲的深度缓冲：
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
 	glDrawBuffer(GL_NONE);
@@ -287,32 +290,36 @@ int main()
 		glfwPollEvents();
 
 
-		// Change light position over time
-		/*lightspot.x = sin(glfwGetTime()) * 3.0f;
-		lightspot.z = cos(glfwGetTime()) * 2.0f;
-		lightspot.y = 5.0 + cos(glfwGetTime()) * 1.0f;*/
+		if (rotate1)
+		{
+			lightspot.x = sin(glfwGetTime()) * 3.0f;
+			lightspot.z = cos(glfwGetTime()) * 2.0f;
+			lightspot.y = 5.0 + cos(glfwGetTime()) * 1.0f;
+		}
+		
 
-		// 1. Render depth of scene to texture (from light's perspective)
-		// - Get light projection/view matrix.
+		//为光源使用正交投影矩阵，透视图将没有任何变形：
 		glm::mat4 lightProjection, lightView;
 		glm::mat4 lightSpaceMatrix;
 		GLfloat near_plane = 1.0f, far_plane = 7.5f;
 		lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-		//lightProjection = glm::perspective(45.0f, (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // Note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene.
-		/*lightView = glm::lookAt(lightspot, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));*/
+		//建一个视图矩阵来变换每个物体，把它们变换到从光源视角可见的空间中，我们将使用glm::lookAt函数；这次从光源的位置看向场景中央。
 		lightView = glm::lookAt(lightspot, glm::vec3(0.0f), cross(glm::vec3(-3.0f, 0.0f, 0.0f),-lightspot));
+		//光空间的变换矩阵，它将每个世界空间坐标变换到光源处所见到的那个空间
 		lightSpaceMatrix = lightProjection * lightView;
 		// - now render scene from light's point of view
 		simpleDepthShader.Use();
 		glUniformMatrix4fv(glGetUniformLocation(simpleDepthShader.programId, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
-
+		
+		// 渲染深度贴图
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		RenderScene(simpleDepthShader);
+		//深度缓冲会被更新
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// 2. Render scene as normal 
+		// 渲染场景
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -1044,13 +1051,13 @@ void RenderSofaBack(Shader &shader, vector<Vertex> cubeData)
 
 void loadtextures()
 {
-	woodTexture = loadTexture("wallupdown.jpg");
+	woodTexture = loadTexture("wallupdown2.jpg");
 	tableTexture = loadTexture("table.jpg");
 	lightTexture = loadTexture("wallupdown.jpg");
 	wallfrontTextureM = loadTexture("window.png");
 	wallfrontTexture = loadTexture("windownight.png");
 	vaseTexture = loadTexture("vase.jpg");
-	wallroundTexture = loadTexture("wallround.jpg");
+	wallroundTexture = loadTexture("wallround2.jpg");
 	wallupTexture = loadTexture("wallupdown.jpg");
 	ChairBackTexture = loadTexture("chair.jpg");
 	EarthFrontTexture = loadTexture("earth.jpg");
@@ -1251,6 +1258,49 @@ vector<Vertex> getvase()
 	return vese;
 }
 
+void drawSphere(GLfloat xx, GLfloat yy, GLfloat zz, GLfloat radius, GLfloat M, GLfloat N)
+{
+	float PI = 3.14;	
+	float step_z = PI / M;      
+	float step_xy = 2 * PI / N;   
+	float x[4], y[4], z[4]; 
+
+	float angle_z = 0.0;   
+	float angle_xy = 0.0;
+	int i = 0, j = 0;
+	
+	for (i = 0; i<M; i++)
+	{
+		angle_z = i * step_z; //每次步进step_z  
+
+			for (j = 0; j<N; j++)
+			{
+				angle_xy = j * step_xy;  //每次步进step_xy  
+				//一层一层的画出来  
+					x[0] = radius * sin(angle_z) * cos(angle_xy);//第一个小平面的第一个顶点坐标  
+					y[0] = radius * sin(angle_z) * sin(angle_xy);
+				z[0] = radius * cos(angle_z);
+
+				x[1] = radius * sin(angle_z + step_z) * cos(angle_xy); //第一个小平面的第二个顶点坐标，下面类似  
+					y[1] = radius * sin(angle_z + step_z) * sin(angle_xy);
+				z[1] = radius * cos(angle_z + step_z);
+
+				x[2] = radius*sin(angle_z + step_z)*cos(angle_xy + step_xy);
+				y[2] = radius*sin(angle_z + step_z)*sin(angle_xy + step_xy);
+				z[2] = radius*cos(angle_z + step_z);
+
+				x[3] = radius * sin(angle_z) * cos(angle_xy + step_xy);
+				y[3] = radius * sin(angle_z) * sin(angle_xy + step_xy);
+				z[3] = radius * cos(angle_z);
+				//至此得到一个平面的4个顶点  
+					for (int k = 0; k<4; k++)
+					{
+						glVertex3f(xx + x[k], yy + y[k], zz + z[k]);  //画出这个平面  
+					}                             
+			}//循环画出这一层的平面，组成一个环  
+	}//z轴++，画出剩余层  
+}
+
 void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode){
 
 	if (nAction == GLFW_PRESS)
@@ -1293,6 +1343,14 @@ void keyFun(GLFWwindow* pWnd, int nKey, int nScanCode, int nAction, int nMode){
 		else if (nKey == GLFW_KEY_X)    // 还原视图
 		{
 			camera.handleTranslation(REBOUND);
+		}
+		else if (nKey == GLFW_KEY_B)    // 还原视图
+		{
+			if (rotate1)
+			{
+				rotate1 = false;
+			}
+			else rotate1 = true;
 		}
 	}
 }

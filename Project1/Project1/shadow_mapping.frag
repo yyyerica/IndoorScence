@@ -65,8 +65,10 @@ void main()
     // specular 镜面光
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
+	//reflect函数要求的第一个是从光源指向片段位置的向量
     float spec = 0.0;
     vec3 halfwayDir = normalize(lightDir + viewDir);  
+	// 计算镜面亮度分量  32是高光的发光值(Shininess)
     spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
     vec3 specular = spec * lightColor;    
     // calculate shadow
