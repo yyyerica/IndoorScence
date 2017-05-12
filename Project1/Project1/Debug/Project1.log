@@ -1,4 +1,4 @@
-﻿Build started 2017/5/4 16:38:33.
+﻿Build started 2017/5/4 17:30:51.
      1>Project "F:\Codes\opengl\IndoorScence\Project1\Project1\Project1.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          B:\vs2013update5\install\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source.cpp
@@ -26,4 +26,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.14
+Time Elapsed 00:00:02.85

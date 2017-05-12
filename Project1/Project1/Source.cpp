@@ -1124,7 +1124,7 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 	else if (mode == 1)
 	{
 		//视点移动旋转
-		camera.handleRotation(x*=0.5);
+		camera.handleRotation(x*=0.1);
 	}
 }
 
@@ -1277,8 +1277,8 @@ void drawSphere(GLfloat xx, GLfloat yy, GLfloat zz, GLfloat radius, GLfloat M, G
 			{
 				angle_xy = j * step_xy;  //每次步进step_xy  
 				//一层一层的画出来  
-					x[0] = radius * sin(angle_z) * cos(angle_xy);//第一个小平面的第一个顶点坐标  
-					y[0] = radius * sin(angle_z) * sin(angle_xy);
+				x[0] = radius * sin(angle_z) * cos(angle_xy);//第一个小平面的第一个顶点坐标  
+				y[0] = radius * sin(angle_z) * sin(angle_xy);
 				z[0] = radius * cos(angle_z);
 
 				x[1] = radius * sin(angle_z + step_z) * cos(angle_xy); //第一个小平面的第二个顶点坐标，下面类似  
